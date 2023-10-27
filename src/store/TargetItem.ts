@@ -41,23 +41,37 @@ export class TargetItem {
     domUtils.eventOn(this.targetElement, "mousedown", (e: Event) => {
       this.multiSelect.setFocus("source");
     });
+  }
 
+  private initRowItemEvent() {
     // item click
-    domUtils.eventOn(this.targetElement, "click", ".pub-select-item", (e: Event, ele: Element) => {
-      console.log("111");
-      this.itemClick(e, ele);
-    });
-
-    // remove button click
-    domUtils.eventOn(this.targetElement, "click", ".pub-multiselect-btn", (e: Event, ele: Element) => {
-      this.move({
-        items: [ele.closest(".pub-select-item")],
+    this.targetElement.querySelectorAll("[data-new-item]").forEach((element) => {
+      domUtils.eventOn(element, "click", (e: Event, ele: Element) => {
+        console.log("111");
+        this.itemClick(e, ele);
       });
-      console.log("122");
 
-      return false;
+      domUtils.eventOn(element, "dblclick", (e: Event, ele: Element) => {
+        if (utils.isFunction(this.targetOpt.dblclick)) {
+          if (this.targetOpt.dblclick.call(ele, e, this.multiSelect.config.currentPageItem.getItem(itemUtils.itemValue(ele))) === false) {
+            return false;
+          }
+        }
+        this.move();
+      });
+
+      // remove button click
+      domUtils.eventOn(element.querySelector(".pub-multiselect-btn"), "click", (e: Event, ele: Element) => {
+        this.move({
+          items: [ele.closest(".pub-select-item")],
+        });
+        console.log("122");
+
+        return false;
+      });
     });
 
+    /*
     // item double click
     domUtils.eventOn(this.targetElement, "dblclick", ".pub-select-item", (e: Event, ele: Element) => {
       if (utils.isFunction(this.targetOpt.dblclick)) {
@@ -67,6 +81,7 @@ export class TargetItem {
       }
       this.move();
     });
+    */
   }
 
   public itemClick(evt: Event, sEle: Element) {
@@ -311,6 +326,7 @@ export class TargetItem {
 
       if (strHtm.length > 0) {
         domUtils.empty(this.targetElement, strHtm.join(""));
+        this.initRowItemEvent();
       } else {
         this.emptyMessage(true);
       }
@@ -326,12 +342,6 @@ export class TargetItem {
   public addItemTemplate(seletVal: string, tmpItem: any) {
     const labelKey = this.multiSelect.options.labelKey;
 
-    let renderTemplate = "";
-
-    if (this.targetOpt.enableRemoveBtn) {
-      renderTemplate = '<button type="button" class="pub-multiselect-btn" data-mode="item-del">' + Lanauage.getMessage("remove") + "</button>";
-    }
-
     let titleText = "";
     let labelTemplate = "";
     if (utils.isFunction(this.multiSelect.options.render)) {
@@ -342,9 +352,11 @@ export class TargetItem {
       labelTemplate = titleText;
     }
 
-    renderTemplate += `<span>${labelTemplate}</span>`;
-
-    return `<li data-pageno="${tmpItem[this.multiSelect.options.pageNumKey] || this.multiSelect.config.currPage}" data-val="${seletVal}" class="pub-select-item" title="${titleText.replace(/["']/g, "")}">${renderTemplate}</li>`;
+    return `
+    <li data-new-item data-pageno="${tmpItem[this.multiSelect.options.pageNumKey] || this.multiSelect.config.currPage}" data-val="${seletVal}" class="pub-select-item" title="${titleText.replace(/["']/g, "")}">
+      ${this.targetOpt.enableRemoveBtn ? `<button type="button" class="pub-multiselect-btn" data-mode="item-del">${Lanauage.getMessage("remove")}</button>` : ""}
+      <span>${labelTemplate}</span>
+    </li>`;
   }
 
   public search(e: Event) {
