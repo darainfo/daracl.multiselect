@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Dara MultiSelect</title>
+</head>
+
+<body>
+  <div class="header">
+    <div class="form-button">
+      <button type="button" onclick="formObj.addItem()">Add</button>
+      <button type="button" onclick="formObj.getValue()">getValue</button>
+      <button type="button" onclick="formBuilder.resetForm()">Reset</button>
+    </div>
+
+    <div>
+      Theme : <label>Light<input type="radio" name="theme-toggle" value="light" checked="true"></label>
+      <label>Dark<input type="radio" name="theme-toggle" value="dark"></label>
+    </div>
+  </div>
+
+  <div style="padding: 0px 20px">
+    <div id="example1"></div>
+  </div>
+</body>
+
+</html>
+<style>
+  .form-button {
+    text-align: center;
+  }
+
+  :root {
+    --bg: #ffffff;
+    --bg-color: #070d19;
+
+  }
+
+  body.dark {
+    --bg: #070d19;
+    --bg-color: #ffffff;
+
+  }
+
+  body {
+    background-color: var(--bg);
+  }
+
+  .header {
+    color: var(--bg-color);
+  }
+</style>
+<script type="module">
+
+  const THEME_KEY = "form-theme";
+  const theme = localStorage.getItem(THEME_KEY);
+
+  if (theme) setMainTheme(theme);
+
+  function setMainTheme(theme, persist = false) {
+    const classList = document.body.classList;
+
+    classList.remove("light", "dark");
+
+    classList.add(theme);
+
+    if (persist) {
+      localStorage.setItem(THEME_KEY, theme);
+    }
+  }
+
+  function load() {
+    // theme
+    const toggler = document.querySelectorAll('[name="theme-toggle"]');
+    const theme = localStorage.getItem(THEME_KEY);
+
+    if (toggler) {
+      if (theme === "dark") {
+        document.querySelector('[name="theme-toggle"][value="dark"]').checked = true;
+      }
+
+      toggler.forEach((el) => {
+        el.addEventListener("click", (e) => {
+          setMainTheme(el.value, true);
+        });
+      })
+    }
+  }
+  load();
+
+
+  let tmpSourceItem = [], paramSourceItem = [];
+
+  for (let i = 0; i < 10; i++) {
+    tmpSourceItem.push({ viewid: '1000' + i, uname: 'nawefawefawefefefefefefeffawfeamenawefawefawefefefefefefeffawfeame' + i });
+  }
+
+  let paramTargetItem = [];
+  for (let i = 0; i < 10; i++) {
+    paramSourceItem.push({ viewid: '0000' + i, uname: 'aaaa' + i });
+  }
+
+  paramTargetItem.push({ viewid: '00000', uname: 'nawefawefawefefefefefefeffawfeamenawefawefawefefefefefefeffawfeame', pageNo: 0 });
+  for (let i = 0; i < 5; i++) {
+    let pageNum = 0;
+    if (i > 3) {
+      pageNum = 4;
+    }
+    paramTargetItem.push({ viewid: '0000' + i, uname: 'name' + i, pageNo: pageNum });
+  }
+
+  const example1 = new MultiSelect('#example1', {
+    mode: 'double'	// single, double
+    , style: {
+      height: 300
+    }
+    , orientation: 'horizontal' // x , y
+    , body: {
+      enableMoveBtn: true	// 이동 버튼 보이기 여부
+      , moveBtnSize: 50	// item move button 영역 width 값
+    }
+    , footer: {
+      enable: true
+    }
+    , useMultiSelect: true
+    , useDragMove: true	// drag해서 이동할지 여부.
+    , useDragSort: true // target drag 해서 정렬할지 여부.
+
+    , duplicateCheck: true
+    , valueKey: 'viewid'
+    , labelKey: 'uname'
+    , source: {
+      items: paramSourceItem
+      , enableLabel: true
+      , search: {
+        enable: true
+
+      }
+      , completeMove: function (addItems) {
+        alert(JSON.stringify(addItems));
+        return false;
+      }
+      , paging: {
+        unitPage: 10
+        , totalCount: 210
+        , currPage: 9
+        , callback: function (clickInfo) {
+          console.log(clickInfo)
+        }
+      }
+    }
+    , target: {
+      label: 'Target'
+      , enableLabel: true
+      , items: []
+      , limitSize: -1 // 추가 가능한 max size
+      , emptyMessage: 'asdfasdf '
+      , completeMove: function (delItem) {
+        console.log(delItem);
+      }
+      , paging: {
+        unitPage: 10
+        , totalCount: 100
+        , currPage: 1
+        // 페이징 없이 카운트만 보일수 있게 처리.
+
+        , callback: function (clickInfo) {
+          console.log(clickInfo)
+        }
+      }
+    }
+
+  });
+
+  example1.setTargetItem(paramTargetItem);
+
+  window.example1 = example1;
+</script>
