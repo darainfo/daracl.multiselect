@@ -13,5 +13,5 @@ export type ITEM_ADD_POSITION = "top" | "bottom";
 
 export const STYLE_CLASS = {
   selected: "selected",
-  addItem: "add-item",
+  addItemCheck: "add-item-check",
 } as const;

@@ -26,12 +26,14 @@ export class PageItem {
 
   public contains(key: any) {
     const idx = this.findIndex(key);
+
     if (idx > -1) return true;
     else return false;
   }
 
   public remove(key: any) {
     const idx = this.findIndex(key);
+
     if (idx > -1) {
       return this.list.splice(idx, 1);
     } else {
@@ -40,7 +42,6 @@ export class PageItem {
   }
 
   public findKey(key: any) {
-    console.log("findKey", key);
     return this.list[this.findIndex(key)];
   }
 

@@ -34,6 +34,7 @@ export interface Options {
   labelKey: string; //  label key
   pageNumKey: string; // page number key
   render: OptionCallback;
+  enableUpDown: boolean; // target updown 버튼 활성화여부.
 
   source: {
     // source item

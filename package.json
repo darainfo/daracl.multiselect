@@ -120,6 +120,6 @@
     "test": "jest",
     "start": "webpack-dev-server --open --config ./webpack.dev.server.js",
     "copy-dts": "copyfiles -u 1 \"src/**/*.d.ts\" dist",
-    "copy-app": "copyfiles -u 1 \"dist/dara.multiselect.*\" D:/03.opensources/vpi-console/vpi-console-web/src/main/webapp/webstatic/js/dara/form"
+    "copy-app": "copyfiles -u 1 \"dist/dara.multiselect.*\" D:/03.opensources/vpi-console/vpi-console-web/src/main/webapp/webstatic/js/dara/multiselect"
   }
 }

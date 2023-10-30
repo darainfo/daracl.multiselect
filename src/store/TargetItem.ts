@@ -13,41 +13,45 @@ import { DaraElement } from "src/util/domCtrl";
 
 export class TargetItem {
   private multiSelect;
+  private targetContainerElement;
   private targetElement;
+
   private targetOpt;
   constructor(multiSelect: DaraMultiSelect) {
     this.multiSelect = multiSelect;
+    this.targetContainerElement = multiSelect.mainElement.querySelector('[data-item-type="target"]') as Element;
     this.targetElement = multiSelect.mainElement.querySelector('[data-type="target"]') as Element;
     this.targetOpt = multiSelect.options.target;
     this.init();
-    this.setTargetItem(this.targetOpt.items);
+    this.setItems(this.targetOpt.items, undefined, { mode: "init" });
     this.initEvt();
   }
 
   init() {
-    let labelEle = this.targetElement.querySelector<HTMLElement>(".pub-multiselect-label");
+    let labelEle = this.targetContainerElement.querySelector<HTMLElement>(".pub-multiselect-label");
+
     if (labelEle) {
       let labelH = labelEle.offsetHeight;
-      labelH = labelH < 36 ? 36 : 0;
+      labelH = labelH > 30 ? labelH + 5 : 0;
 
-      let selectAreaElementStyle = this.targetElement.querySelector<HTMLElement>(".pub-multiselect-area")?.style;
+      let selectAreaElementStyle = this.targetContainerElement.querySelector<HTMLElement>(".pub-multiselect-area")?.style;
       if (selectAreaElementStyle) {
-        selectAreaElementStyle.height = `calc(100% - "${labelH}px)`;
+        selectAreaElementStyle.height = `calc(100% - ${labelH}px)`;
       }
     }
   }
 
   private initEvt() {
     domUtils.eventOn(this.targetElement, "mousedown", (e: Event) => {
-      this.multiSelect.setFocus("source");
+      this.multiSelect.setFocus("target");
     });
   }
 
   private initRowItemEvent() {
     // item click
     this.targetElement.querySelectorAll("[data-new-item]").forEach((element) => {
+      element.removeAttribute("data-new-item");
       domUtils.eventOn(element, "click", (e: Event, ele: Element) => {
-        console.log("111");
         this.itemClick(e, ele);
       });
 
@@ -65,7 +69,6 @@ export class TargetItem {
         this.move({
           items: [ele.closest(".pub-select-item")],
         });
-        console.log("122");
 
         return false;
       });
@@ -85,8 +88,7 @@ export class TargetItem {
   }
 
   public itemClick(evt: Event, sEle: Element) {
-    const _this = this,
-      opts = _this.multiSelect.options;
+    const opts = this.multiSelect.options;
 
     let evtElement = this.targetElement;
 
@@ -136,7 +138,8 @@ export class TargetItem {
     }
   }
 
-  public setItemFocus(key: string) {
+  public setItemFocus(key: string | null) {
+    if (key == null) return;
     const itemEle = this.getItemElement(key);
 
     itemEle?.setAttribute("tabindex", "-1");
@@ -160,7 +163,10 @@ export class TargetItem {
     if (enableFlag) {
       this.targetElement.innerHTML = `<li class="empty-message">${this.targetOpt.emptyMessage}</li>`;
     } else {
-      this.targetElement.querySelector(".empty-message")?.replaceChildren();
+      const emptyMessageElement = this.targetElement.querySelector(".empty-message");
+      if (emptyMessageElement) {
+        emptyMessageElement.remove();
+      }
     }
   }
 
@@ -192,6 +198,10 @@ export class TargetItem {
     return this.targetElement.querySelector(`[data-val="${key}"]`);
   }
 
+  public getSelectionElements() {
+    return this.targetElement.querySelectorAll(".pub-select-item.selected:not(.hide)");
+  }
+
   /**
    * target 에서 item제거
    * 
@@ -199,7 +209,6 @@ export class TargetItem {
    ```
     {
 	  items : [] 
-	  returnFlag : true or false; default false
 	  appendIdx : append index
 	  type : item or element; default element
 	  }
@@ -208,7 +217,7 @@ export class TargetItem {
   public move(opt?: any) {
     opt = opt || {};
 
-    const selectVal = opt.items || this.targetElement.querySelectorAll(".pub-select-item.selected:not(.hide)");
+    const selectVal = opt.items || this.getSelectionElements();
 
     if (selectVal.length > 0) {
       let removeItem;
@@ -259,12 +268,9 @@ export class TargetItem {
     }
   }
 
-  public setTargetItem(items: any[], pagingInfo?: any, pOpts?: any): void {
+  public setItems(items: any[], pagingInfo?: any, pOpts?: any): void {
     const _opts = this.multiSelect.options;
     pOpts = pOpts ?? {};
-
-    console.log(items);
-
     const mode = pOpts.mode;
 
     const targetOpt = _opts.target;
@@ -274,10 +280,9 @@ export class TargetItem {
 
     if (mode === "init") {
       this.multiSelect.config.allPageItem = {};
+      this.multiSelect.sourceItem.allRemoveAddItemClass();
+      this.multiSelect._changePageInfo(currPageNo, true);
     }
-
-    this.multiSelect._changePageInfo(currPageNo, true);
-    this.multiSelect.sourceItem.allRemoveAddItemClass();
 
     if (len > 0) {
       let tmpItem;
@@ -319,13 +324,22 @@ export class TargetItem {
           strHtm.push(this.addItemTemplate(itemValue, tmpItem));
         }
 
-        if (utils.isUndefined(this.multiSelect.config.itemKeyInfo[itemValue])) {
-          this.multiSelect.sourceItem.setAddItemClass(itemValue);
+        if (!utils.isUndefined(this.multiSelect.config.itemKeyInfo[itemValue])) {
+          this.multiSelect.sourceItem.setAddItemCheckStyle(itemValue);
         }
       }
 
       if (strHtm.length > 0) {
-        domUtils.empty(this.targetElement, strHtm.join(""));
+        if (mode == "add") {
+          if (this.multiSelect.options.addPosition == "top") {
+            domUtils.prepend(this.targetElement, strHtm.join(""));
+          } else {
+            domUtils.append(this.targetElement, strHtm.join(""));
+          }
+        } else {
+          domUtils.empty(this.targetElement, strHtm.join(""));
+        }
+
         this.initRowItemEvent();
       } else {
         this.emptyMessage(true);
@@ -334,8 +348,22 @@ export class TargetItem {
       this.emptyMessage(true);
     }
 
+    this.setPaging(pagingInfo);
+  }
+
+  public setPaging(pagingInfo: any) {
     if (this.targetOpt.paging.enable) {
       pagingUtil.setPaging(this.multiSelect, this.multiSelect.getPrefix() + "TargetPaging", pagingInfo ?? this.targetOpt.paging);
+
+      this.targetContainerElement.querySelectorAll(".pub-multiselect-paging .page-num").forEach((element) => {
+        domUtils.eventOn(element, "click", (e: Event, ele: Element) => {
+          const pageno = ele.getAttribute("pageno");
+
+          if (this.targetOpt.paging.callback) {
+            this.targetOpt.paging.callback.call(null, { no: pageno, searchword: this.getSearchFieldValue() || "", evt: e });
+          }
+        });
+      });
     }
   }
 
@@ -354,13 +382,17 @@ export class TargetItem {
 
     return `
     <li data-new-item data-pageno="${tmpItem[this.multiSelect.options.pageNumKey] || this.multiSelect.config.currPage}" data-val="${seletVal}" class="pub-select-item" title="${titleText.replace(/["']/g, "")}">
-      ${this.targetOpt.enableRemoveBtn ? `<button type="button" class="pub-multiselect-btn" data-mode="item-del">${Lanauage.getMessage("remove")}</button>` : ""}
+      ${this.targetOpt.enableRemoveBtn ? `<button type="button" class="pub-multiselect-btn" data-mode="item-remove">${Lanauage.getMessage("remove")}</button>` : ""}
       <span>${labelTemplate}</span>
     </li>`;
   }
 
+  public getSearchFieldValue() {
+    return (this.targetContainerElement.querySelector(".input-text") as HTMLInputElement)?.value;
+  }
+
   public search(e: Event) {
-    let schText = (this.targetElement.querySelector(".input-text") as HTMLInputElement).value;
+    let schText = this.getSearchFieldValue();
 
     if (this.targetOpt.search.callback) {
       this.targetOpt.search.callback.call(null, schText, e);
@@ -382,6 +414,68 @@ export class TargetItem {
           domUtils.addClass(itemEle, "hide");
         }
       });
+    }
+  }
+
+  /**
+   * 위로 이동
+   *
+   */
+  public up() {
+    const selectElements = this.getSelectionElements();
+    const selectLen = selectElements.length;
+
+    if (selectLen < 1) return;
+
+    const currPageItem = this.multiSelect.config.currentPageItem;
+
+    for (let i = 0; i < selectLen; i++) {
+      const currElement = selectElements[i];
+
+      const prevElement = currElement.previousElementSibling;
+
+      if (prevElement && !domUtils.hasClass(prevElement, STYLE_CLASS.selected)) {
+        domUtils.before(prevElement, currElement);
+
+        const dataVal = itemUtils.itemValue(currElement);
+
+        const currPosition = currPageItem.findIndex(dataVal);
+
+        if (currPosition > -1) {
+          currPageItem.move(currPosition - 1, currPosition);
+        }
+      }
+    }
+
+    this.setItemFocus(itemUtils.itemValue(selectElements[0]));
+  }
+
+  /**
+   * 아래로 이동
+   */
+  public down() {
+    const selectElements = this.getSelectionElements();
+    const selectLen = selectElements.length;
+
+    if (selectLen < 1) return;
+
+    const currPageItem = this.multiSelect.config.currentPageItem;
+
+    for (let i = selectLen - 1; i >= 0; i--) {
+      const currElement = selectElements[i];
+      const nexElement = currElement.nextElementSibling;
+
+      if (nexElement && !domUtils.hasClass(nexElement, STYLE_CLASS.selected)) {
+        domUtils.after(nexElement, currElement);
+
+        const dataVal = itemUtils.itemValue(currElement);
+
+        const currPosition = currPageItem.findIndex(dataVal);
+
+        if (currPosition > -1) {
+          currPageItem.move(currPosition + 1, currPosition);
+        }
+      }
     }
   }
 }

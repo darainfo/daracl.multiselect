@@ -29,6 +29,16 @@ export default {
       }
     });
   },
+  hasClass(el: Element | string | NodeList, styleClassName: string) {
+    for (let el1 of $querySelector(el)) {
+      if (el1.classList.contains(styleClassName)) {
+        return true;
+      }
+    }
+
+    return false;
+  },
+
   addClass(el: Element | string | NodeList | null, styleClassName: string) {
     if (el == null) return el;
 
@@ -60,7 +70,10 @@ export default {
       listener = selector;
       elements.forEach((el) => {
         el.addEventListener(type, (e) => {
-          listener(e, el);
+          if (listener(e, el) === false) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+          }
         });
       });
 
@@ -74,7 +87,6 @@ export default {
 
       if (selectorEle) {
         if (listener(e, selectorEle) === false) {
-          console.log("222");
           e.stopImmediatePropagation();
           e.preventDefault();
         }

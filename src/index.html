@@ -9,9 +9,8 @@
 <body>
   <div class="header">
     <div class="form-button">
-      <button type="button" onclick="formObj.addItem()">Add</button>
-      <button type="button" onclick="formObj.getValue()">getValue</button>
-      <button type="button" onclick="formBuilder.resetForm()">Reset</button>
+      <button type="button" onclick="targetObj.addItems()">Add</button>
+      <button type="button" onclick="targetObj.getTargetItems()">getTargetItems</button>
     </div>
 
     <div>
@@ -115,7 +114,7 @@
     , style: {
       height: 300
     }
-    , orientation: 'horizontal' // x , y
+    , orientation: 'horizontal' // horizontal , vertical
     , body: {
       enableMoveBtn: true	// 이동 버튼 보이기 여부
       , moveBtnSize: 50	// item move button 영역 width 값
@@ -126,6 +125,7 @@
     , useMultiSelect: true
     , useDragMove: true	// drag해서 이동할지 여부.
     , useDragSort: true // target drag 해서 정렬할지 여부.
+    , enableUpDown: true // updown 버튼 활성화여부.
 
     , duplicateCheck: true
     , valueKey: 'viewid'
@@ -138,13 +138,14 @@
 
       }
       , completeMove: function (addItems) {
-        alert(JSON.stringify(addItems));
-        return false;
+        console.log('source completeMove fn', JSON.stringify(addItems));
+        return true;
       }
       , paging: {
-        unitPage: 10
-        , totalCount: 210
-        , currPage: 9
+        enable: true
+        , unitPage: 10
+        , totalCount: 300
+        , currPage: 15
         , callback: function (clickInfo) {
           console.log(clickInfo)
         }
@@ -160,8 +161,9 @@
         console.log(delItem);
       }
       , paging: {
-        unitPage: 10
-        , totalCount: 100
+        enable: true
+        , unitPage: 10
+        , totalCount: 150
         , currPage: 1
         // 페이징 없이 카운트만 보일수 있게 처리.
 
@@ -173,7 +175,18 @@
 
   });
 
-  example1.setTargetItem(paramTargetItem);
+  example1.setTargetItems(paramTargetItem);
 
+  const targetObj = {
+    getTargetItems: () => {
+      console.log(example1.getTargetItems());
+      return;
+    }
+
+    , addItems: () => {
+      example1.setTargetItems(paramTargetItem);
+    }
+  }
+  window.targetObj = targetObj;
   window.example1 = example1;
 </script>

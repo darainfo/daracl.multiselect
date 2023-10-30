@@ -30,7 +30,7 @@ class Language {
    * @param {?Message} [lang] 둥록할 메시지
    */
   public set(lang?: Message) {
-    this.lang = Object.assign({}, localeMessage, lang);
+    this.lang = utils.objectMerge({}, localeMessage, lang);
   }
 
   /**

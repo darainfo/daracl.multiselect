@@ -9,34 +9,42 @@ import { Paging } from "@t/Paging";
 
 export class SourceItem {
   private multiSelect;
+  private sourceContainerElement;
   private sourceElement;
   private sourceOpt;
 
+  private isSingleMode = false;
+
   constructor(multiSelect: DaraMultiSelect) {
     this.multiSelect = multiSelect;
+    this.isSingleMode = multiSelect.options.mode == "single";
+    this.sourceContainerElement = this.multiSelect.mainElement.querySelector('[data-item-type="source"]') as Element;
     this.sourceElement = multiSelect.mainElement.querySelector('[data-type="source"]') as Element;
     this.sourceOpt = multiSelect.options.source;
     this.init();
-    this.setSourceItem(this.sourceOpt.items);
+    this.setItems(this.sourceOpt.items);
     this.initEvt();
   }
 
   init() {
-    let labelEle = this.sourceElement.querySelector<HTMLElement>(".pub-multiselect-label");
+    if (this.isSingleMode) return;
+    let labelEle = this.sourceContainerElement.querySelector<HTMLElement>(".pub-multiselect-label");
+
     if (labelEle) {
       let labelH = labelEle.offsetHeight;
-      labelH = labelH < 36 ? 36 : 0;
+      labelH = labelH > 30 ? labelH + 5 : 0;
 
-      let selectAreaElementStyle = this.sourceElement.querySelector<HTMLElement>(".pub-multiselect-area")?.style;
+      let selectAreaElementStyle = this.sourceContainerElement.querySelector<HTMLElement>(".pub-multiselect-area")?.style;
+
       if (selectAreaElementStyle) {
-        selectAreaElementStyle.height = `calc(100% - "${labelH}px)`;
+        selectAreaElementStyle.height = `calc(100% - ${labelH}px)`;
       }
     }
   }
 
   public itemClick(evt: Event, sEle: Element) {
-    const _this = this,
-      opts = _this.multiSelect.options;
+    if (this.isSingleMode) return;
+    const opts = this.multiSelect.options;
 
     let evtElement = this.sourceElement;
 
@@ -87,28 +95,14 @@ export class SourceItem {
   }
 
   private initEvt() {
+    if (this.isSingleMode) return;
     // source click
     this.sourceElement.addEventListener("mousedown", (e) => {
       this.multiSelect.setFocus("source");
     });
 
-    // source item click
-    this.sourceElement.querySelectorAll(".pub-select-item").forEach((itemEle) => {
-      itemEle.addEventListener("click", (e) => {
-        this.itemClick(e, itemEle);
-      });
-    });
-
-    this.sourceElement.querySelectorAll(".pub-select-item").forEach((itemEle) => {
-      itemEle.addEventListener("dblclick", (e) => {
-        this.move();
-      });
-    });
-
-    this.sourceElement.querySelectorAll(".pub-select-item").forEach((itemEle) => {
-      itemEle.addEventListener("selectstart", (e) => {
-        return false;
-      });
+    this.sourceElement.addEventListener("selectstart", (e) => {
+      return false;
     });
 
     if (this.multiSelect.options.useDragMove !== false) {
@@ -116,35 +110,71 @@ export class SourceItem {
     }
   }
 
-  public setSourceItem(items: any[], pagingInfo?: any) {
+  public initRowItemEvent() {
+    if (this.isSingleMode) return;
+    this.sourceElement.querySelectorAll(".pub-select-item").forEach((element) => {
+      domUtils.eventOn(element, "click", (e: Event, ele: Element) => {
+        this.itemClick(e, ele);
+      });
+
+      domUtils.eventOn(element, "dblclick", (e: Event, ele: Element) => {
+        if (utils.isFunction(this.sourceOpt.dblclick)) {
+          if (this.sourceOpt.dblclick.call(null, e, ele) === false) {
+            return false;
+          }
+        }
+        this.move();
+      });
+
+      // add button click
+      domUtils.eventOn(element.querySelector(".pub-multiselect-btn"), "click", (e: Event, ele: Element) => {
+        this.move({
+          items: [ele.closest(".pub-select-item")],
+        });
+
+        return false;
+      });
+    });
+  }
+
+  public setItems(items: any[], pagingInfo?: any) {
+    if (this.isSingleMode) return;
     const len = items.length;
 
     if (len > 0) {
       const strHtm = [];
       const valKey = this.multiSelect.options.valueKey;
-      const pageMaxVal = this.multiSelect.options.target.paging.unitPage;
       for (let i = 0; i < len; i++) {
         const tmpItem = items[i];
         const itemValue = tmpItem[valKey];
-        let itemCheckFlag = false;
-        for (let j = 1; j <= pageMaxVal; j++) {
-          if (this.multiSelect.config.allPageItem[j] && utils.isUndefined(this.multiSelect.config.allPageItem[j][itemValue])) {
-            itemCheckFlag = true;
-            break;
-          }
-        }
 
-        strHtm.push(this.addItemTemplate(itemValue, tmpItem, itemCheckFlag));
+        strHtm.push(this.addItemTemplate(itemValue, tmpItem));
         this.multiSelect.config.itemKeyInfo[itemValue] = tmpItem;
       }
 
-      this.sourceElement.innerHTML = strHtm.join("");
+      domUtils.empty(this.sourceElement, strHtm.join(""));
+
+      this.initRowItemEvent();
     } else {
       this.emptyMessage(true);
     }
 
+    this.setPaging(pagingInfo);
+  }
+
+  public setPaging(pagingInfo: any) {
     if (this.sourceOpt.paging.enable) {
       pagingUtil.setPaging(this.multiSelect, this.multiSelect.getPrefix() + "SourcePaging", pagingInfo ?? this.sourceOpt.paging);
+
+      this.sourceContainerElement.querySelectorAll(".pub-multiselect-paging .page-num").forEach((element) => {
+        domUtils.eventOn(element, "click", (e: Event, ele: Element) => {
+          const pageno = ele.getAttribute("pageno");
+
+          if (this.sourceOpt.paging.callback) {
+            this.sourceOpt.paging.callback.call(null, { no: pageno, searchword: this.getSearchFieldValue() || "", evt: e });
+          }
+        });
+      });
     }
   }
 
@@ -162,18 +192,22 @@ export class SourceItem {
    * @param key item key
    */
   public removeAddItemClass(key: string) {
-    this.getItemElement(key)?.classList.remove(STYLE_CLASS.addItem);
+    if (this.isSingleMode) return;
+    this.getItemElement(key)?.classList.remove(STYLE_CLASS.addItemCheck);
   }
 
   public allRemoveAddItemClass() {
-    domUtils.removeClass(this.sourceElement.querySelectorAll(".pub-select-item"), STYLE_CLASS.addItem);
+    if (this.isSingleMode) return;
+    domUtils.removeClass(this.sourceElement.querySelectorAll(".pub-select-item"), STYLE_CLASS.addItemCheck);
   }
 
-  public setAddItemClass(key: string) {
-    domUtils.addClass(this.getItemElement(key), STYLE_CLASS.addItem);
+  public setAddItemCheckStyle(key: string) {
+    if (this.isSingleMode) return;
+    domUtils.addClass(this.getItemElement(key), STYLE_CLASS.addItemCheck);
   }
 
   public itemSelection(e: Event, opt: any): void {
+    if (this.isSingleMode) return;
     const evtElement = this.sourceElement;
 
     const mode = opt.mode;
@@ -199,14 +233,12 @@ export class SourceItem {
    ```
     {
 	  items : [] 
-	  returnFlag : true or false; default false
 	  appendIdx : append index
 	  type : item or element; default element
 	  }
    * @returns 
    */
   public move(opt?: any) {
-    const _this = this;
     opt = opt ?? {};
     const mainOpts = this.multiSelect.options;
     const limitSize = this.multiSelect.targetItem.getLimitSize();
@@ -215,11 +247,7 @@ export class SourceItem {
     const selectLen = selectVal.length;
 
     if (selectLen > 0) {
-      const returnFlag = opt.returnFlag;
-      const appendIdx = utils.isUndefined(opt.appendIdx) ? -1 : opt.appendIdx;
-
       let tmpVal: any;
-      const strHtm = [];
 
       let addItemCount = this.multiSelect.targetItem.getLength();
 
@@ -251,22 +279,16 @@ export class SourceItem {
         if (limitSize != -1 && addItemCount >= limitSize) {
           alert(Lanauage.getMessage("maxSizeMsg", { maxSize: limitSize }));
 
-          if (returnFlag === true) {
-            return false;
-          }
-
           return false;
         }
         addItemCount += 1;
 
-        const _addItem = Object.assign({}, selectItem);
+        const _addItem = utils.objectMerge({}, selectItem);
         _addItem["_CU"] = "C";
 
         firstKey = tmpVal;
 
         addItems.push(_addItem);
-
-        strHtm.push(this.addItemTemplate(tmpVal, selectItem));
       }
 
       if (addItems.length < 1) {
@@ -286,61 +308,34 @@ export class SourceItem {
         if (this.sourceOpt.completeMove(itemKeys, addItems) === false) return false;
       }
 
-      this.multiSelect.targetItem.emptyMessage(false);
+      this.multiSelect.targetItem.setItems(addItems, undefined, { mode: "add", appendIdx: utils.isUndefined(opt.appendIdx) ? -1 : opt.appendIdx });
 
-      for (let j = 0; j < addItems.length; j++) {
-        let item = addItems[j];
-        this.getItemElement(addItems[j][mainOpts.valueKey])?.classList.add(STYLE_CLASS.addItem);
-
-        if (appendIdx != -1) {
-          this.multiSelect.config.currentPageItem.add(item, appendIdx + j);
-        } else {
-          this.multiSelect.config.currentPageItem.add(item);
-        }
-      }
-
-      if (returnFlag === true) {
-        return strHtm.join("");
-      } else {
-        if (this.multiSelect.options.addPosition == "top") {
-          domUtils.prepend(this.sourceElement, strHtm.join(""));
-        } else {
-          domUtils.append(this.sourceElement, strHtm.join(""));
-        }
-
-        this.multiSelect.targetItem.setItemFocus(firstKey);
-      }
-    } else {
-      if (this.multiSelect.options.enableAddEmptyMessage !== false) {
-        alert(Lanauage.getMessage("addEmptyMessage"));
-        return;
-      }
+      this.multiSelect.targetItem.setItemFocus(firstKey);
+    } else if (this.multiSelect.options.enableAddEmptyMessage !== false) {
+      alert(Lanauage.getMessage("addEmptyMessage"));
+      return;
     }
   }
 
-  private addItemTemplate(seletVal: string, tmpItem: any, selectFlag?: boolean) {
+  private addItemTemplate(seletVal: string, tmpItem: any) {
     const labelKey = this.multiSelect.options.labelKey;
     let titleText = "";
-    let renderTemplate = "";
+    let labelTemplate = "";
     if (utils.isFunction(this.multiSelect.options.render)) {
-      renderTemplate = this.multiSelect.options.render.call(this.sourceOpt, { text: tmpItem[labelKey], item: tmpItem }, "source");
-      titleText = domUtils.htmlToText(renderTemplate);
+      labelTemplate = this.multiSelect.options.render.call(this.sourceOpt, { text: tmpItem[labelKey], item: tmpItem }, "source");
+      titleText = domUtils.htmlToText(labelTemplate);
     } else {
-      renderTemplate = titleText = tmpItem[labelKey];
-    }
-    renderTemplate = "<span>" + renderTemplate + "</span>";
-
-    let styleClass = "";
-
-    if (selectFlag === true || this.multiSelect.config.currentPageItem.contains(seletVal)) {
-      styleClass += STYLE_CLASS.selected;
+      labelTemplate = titleText = tmpItem[labelKey];
     }
 
-    if (this.sourceOpt.enableAddBtn) {
-      renderTemplate += '<button type="button" class="pub-multiselect-btn" data-mode="item-add">' + Lanauage.getMessage("add") + "</button>";
-    }
+    let styleClass = this.multiSelect.config.currentPageItem.contains(seletVal) ? STYLE_CLASS.addItemCheck : "";
 
-    return `<li data-val="${seletVal}" class="pub-select-item ${styleClass}" title="${titleText.replace(/["']/g, "")}">${renderTemplate}</li>`;
+    return `
+    <li data-val="${seletVal}" class="pub-select-item ${styleClass}" title="${titleText.replace(/["']/g, "")}">
+      <span>${labelTemplate}</span>
+      ${this.sourceOpt.enableAddBtn ? `<button type="button" class="pub-multiselect-btn" data-mode="item-add">${Lanauage.getMessage("add")}</button>` : ""}
+      
+    </li>`;
   }
 
   public emptyMessage(enableFlag: boolean) {
@@ -351,8 +346,12 @@ export class SourceItem {
     }
   }
 
+  public getSearchFieldValue() {
+    return (this.sourceContainerElement.querySelector(".input-text") as HTMLInputElement)?.value;
+  }
+
   public search(e: Event) {
-    let schText = (this.sourceElement.querySelector(".input-text") as HTMLInputElement).value;
+    let schText = this.getSearchFieldValue();
 
     if (this.sourceOpt.search.callback) {
       this.sourceOpt.search.callback.call(null, schText, e);

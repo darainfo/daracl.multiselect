@@ -5,6 +5,7 @@ import Lanauage from "./util/Lanauage";
 import { PageItem } from "./store/PageItem";
 import { SourceItem } from "./store/SourceItem";
 import { TargetItem } from "./store/TargetItem";
+import domUtils from "./util/domUtils";
 
 const defaultOptions = {
   style: {
@@ -26,6 +27,7 @@ const defaultOptions = {
   addPosition: "bottom", // 추가 되는 방향키로 추가시 어디를 추가할지. ex(source, last)
   duplicateCheck: true, // 중복 추가 여부.
   enableAddItemCheck: true, // 추가된 아이템 표시 여부.
+  enableUpDown: false, //
   items: [], // item
   valueKey: "code", // value key
   labelKey: "name", //  label key
@@ -74,7 +76,7 @@ const defaultOptions = {
     paging: {
       // 다중으로 관리할경우 처리.
       enable: false,
-      unitPage: 1, // max page 값
+      unitPage: 10, // max page 값
       currPage: 1, // 현재 값
       enableMultiple: true, // 페이징 처리를 item 내부의 pageNo 값으로 처리.
     },
@@ -130,9 +132,6 @@ export default class DaraMultiSelect {
 
     const mainElement = document.querySelector<HTMLElement>(selector);
     if (mainElement) {
-      options.source.paging = Object.assign(defaultPaging, options.source.paging);
-      options.target.paging = Object.assign(defaultPaging, options.target.paging);
-
       this.options = utils.objectMerge({}, defaultOptions, options);
 
       this.orginStyleClass = mainElement.className;
@@ -171,6 +170,50 @@ export default class DaraMultiSelect {
     this.render();
     this.sourceItem = new SourceItem(this);
     this.targetItem = new TargetItem(this);
+    this.initEvt();
+  }
+  initEvt() {
+    if (this.options.mode == "double") {
+      // 추가 버튼
+      domUtils.eventOn(this.mainElement.querySelector('.pub-multiselect-move-btn > .pub-multiselect-btn[data-mode="add"]'), "click", (e: Event, ele: Element) => {
+        this.sourceItem.move();
+      });
+
+      // 제거 버튼
+      domUtils.eventOn(this.mainElement.querySelector('.pub-multiselect-move-btn > .pub-multiselect-btn[data-mode="remove"]'), "click", (e: Event, ele: Element) => {
+        this.targetItem.move();
+      });
+    }
+
+    //updown
+    if (this.options.enableUpDown) {
+      domUtils.eventOn(this.mainElement.querySelector('.pubMultiselect-footer > .pub-multiselect-btn[data-mode="up"]'), "click", (e: Event, ele: Element) => {
+        this.targetItem.up();
+      });
+
+      domUtils.eventOn(this.mainElement.querySelector('.pubMultiselect-footer > .pub-multiselect-btn[data-mode="down"]'), "click", (e: Event, ele: Element) => {
+        this.targetItem.down();
+      });
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (!this.config.focus) return;
+
+      const evtKey = e.key ?? e.keyCode;
+
+      if (e.metaKey || e.ctrlKey) {
+        if (evtKey == "a" || evtKey == "A" || evtKey == "65") {
+          // ctrl + a
+          if (this.config.focusType == "source") {
+            this.sourceItem.itemSelection(e, { mode: "all" });
+          } else {
+            this.targetItem.itemSelection(e, { mode: "all" });
+          }
+          e.preventDefault();
+          return false;
+        }
+      }
+    });
   }
 
   public _changePageInfo(pageNo: number, initFlag: boolean): void {
@@ -264,7 +307,7 @@ export default class DaraMultiSelect {
 
       if (enableMoveBtn) {
         strHtm.push('						<button type="button" style="margin-bottom:5px;" class="pub-multiselect-btn" data-mode="add" title="' + Lanauage.getMessage("add") + '"></button><br/>');
-        strHtm.push('						<button type="button" class="pub-multiselect-btn" data-mode="del" title="' + Lanauage.getMessage("remove") + '"></button>');
+        strHtm.push('						<button type="button" class="pub-multiselect-btn" data-mode="remove" title="' + Lanauage.getMessage("remove") + '"></button>');
       }
 
       strHtm.push("					</td>");
@@ -293,7 +336,7 @@ export default class DaraMultiSelect {
     strHtm.push("	</div>");
 
     // footer
-    if (this.options.footer.enable === true) {
+    if (this.options.enableUpDown === true) {
       strHtm.push('	<div class="pubMultiselect-footer">');
       strHtm.push('		<button type="button" class="pub-multiselect-btn" data-mode="up" style="margin-right:5px;">' + Lanauage.getMessage("up") + "</button>");
       strHtm.push('		<button type="button" class="pub-multiselect-btn" data-mode="down">' + Lanauage.getMessage("down") + "</button>");
@@ -363,7 +406,7 @@ export default class DaraMultiSelect {
     strHtm.push("</div>"); // body end
 
     // footer
-    if (this.options.footer.enable === true) {
+    if (this.options.enableUpDown === true) {
       strHtm.push('	<div class="pubMultiselect-footer">');
       strHtm.push('		<button type="button" class="pub-multiselect-btn" data-mode="up" style="margin-right:5px;">' + Lanauage.getMessage("up") + "</button>");
       strHtm.push('		<button type="button" class="pub-multiselect-btn" data-mode="down">' + Lanauage.getMessage("down") + "</button>");
@@ -400,12 +443,42 @@ export default class DaraMultiSelect {
     return strHtm.join("");
   }
 
-  public setSourceItem(items: any[]) {
-    this.sourceItem.setSourceItem(items);
+  /**
+   * set source items
+   * @param items {array} items
+   */
+  public setSourceItems(items: any[], pagingInfo: any) {
+    this.options.source.items = items;
+    this.sourceItem.setItems(items, pagingInfo);
   }
 
-  public setTargetItem(items: any[]) {
-    this.targetItem.setTargetItem(items);
+  /**
+   * set target item
+   *
+   * @param items {array} items
+   */
+  public setTargetItems(items: any[], pagingInfo: any) {
+    this.options.target.items = items;
+    this.targetItem.setItems(items, pagingInfo);
+  }
+
+  public getTargetItems(pageNum: number | undefined) {
+    if (!utils.isUndefined(pageNum)) {
+      return this.config.allPageItem[pageNum].allItem();
+    } else {
+      const items = [];
+
+      for (let no in this.config.allPageItem) {
+        let pageItems = this.config.allPageItem[no].allItem();
+
+        for (let key in pageItems) {
+          let addItem = pageItems[key];
+          addItem["_pageNum"] = no;
+          items.push(addItem);
+        }
+      }
+      return items;
+    }
   }
 
   public destroy = () => {
