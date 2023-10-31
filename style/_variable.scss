@@ -1,31 +1,19 @@
-@import "global";
-
-$pubmultiselect_colors: (
-  "light": (
-    "row_selection": #d6f0f7,
-  ),
-  "dark": (
-    "row_selection": #4078c1,
-  ),
-);
-
-// function
-@function pluginColorInfo($themeName: "light", $type: "font_color") {
-  $map: map-get($pubmultiselect_colors, $themeName);
-
-  @if $map != null {
-    @return map-get($map, $type);
-  } @else {
-    @error 'theme pluginColorInfo name ['+$themeName+'] key ['+ $type+'] not found';
-    @return "style not found";
-  }
-}
-
-// grid selection border
-@mixin grid_box_shadow($themeName: "light") {
-  $color: gridColorInfo($themeName, "cell_selection");
-  //border-right: 1px solid $color ;
-  -webkit-box-shadow: inset inset 0.1px 0px 0px 1px $color;
-  -moz-box-shadow: inset 0.1px 0px 0px 1px $color;
-  box-shadow: inset 0.1px 0px 0px 1px $color;
+.dara-multiselect {
+  --border-color: #dfe1e5;
+  --body-bg: #ffffff;
+  --body-color: #686868;
+  --body-hover-color: #edeeef;
+  --body-hover-bg: #d1e4f5;
+  --body-active-color: #fff;
+  --body-active-bg: #337ab7;
+  --body-disabled-color: #777;
+  --btn-bg: transparent;
+  --btn-color: #000000;
+  --btn-bg-hover: #dee2e6;
+  --input-bg: transparent;
+  --input-color: #212529;
+  --input-disabled-bg: #ebebeb;
+  --item-selected-bg: rgba(85, 241, 241, 0.295);
+  --item-selected-color: #212529;
+  --add-item-color: #5970f5;
 }

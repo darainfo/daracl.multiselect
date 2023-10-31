@@ -109,6 +109,20 @@
     paramTargetItem.push({ viewid: '0000' + i, uname: 'name' + i, pageNo: pageNum });
   }
 
+
+  MultiSelect.setMessage({
+    up: '위',
+    down: '아래',
+    add: '추가',
+    allAdd: '전체추가',
+    remove: '제거',
+    allRemove: '전체제거',
+    maxSizeMsg: "{maxSize} 개 까지 등록 가능합니다.", // 추가 가능한 max size가 넘었을경우 메시지 String
+    duplicate: "이미 등록된 항목이 존재합니다.",
+    addEmptyMessage: "추가할 항목을 선택해주세요.",
+    removeEmptyMessage: "제거할 항목을 선택해주세요.",
+  })
+
   const example1 = new MultiSelect('#example1', {
     mode: 'double'	// single, double
     , style: {
@@ -135,7 +149,9 @@
       , enableLabel: true
       , search: {
         enable: true
-
+        , callback: (param) => {
+          console.log(param)
+        }
       }
       , completeMove: function (addItems) {
         console.log('source completeMove fn', JSON.stringify(addItems));

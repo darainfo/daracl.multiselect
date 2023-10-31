@@ -48,7 +48,6 @@ export interface Options {
     search: {
       enable: boolean;
       callback: undefined | OptionCallback;
-      enableKeyPress: boolean; // keypress event 활성화 여부
     };
     beforeMove: undefined | OptionCallback; // 이동전  이벤트
     completeMove: undefined | OptionCallback; // 이동 완료  이벤트
@@ -73,7 +72,6 @@ export interface Options {
     search: {
       enable: boolean;
       callback: undefined | OptionCallback;
-      enableKeyPress: boolean; // keypress event 활성화 여부
     };
 
     beforeMove: boolean | OptionCallback; // 이동전  이벤트

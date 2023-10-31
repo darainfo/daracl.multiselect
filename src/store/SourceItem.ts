@@ -28,13 +28,13 @@ export class SourceItem {
 
   init() {
     if (this.isSingleMode) return;
-    let labelEle = this.sourceContainerElement.querySelector<HTMLElement>(".pub-multiselect-label");
+    let labelEle = this.sourceContainerElement.querySelector<HTMLElement>(".dara-multiselect-label");
 
     if (labelEle) {
       let labelH = labelEle.offsetHeight;
       labelH = labelH > 30 ? labelH + 5 : 0;
 
-      let selectAreaElementStyle = this.sourceContainerElement.querySelector<HTMLElement>(".pub-multiselect-area")?.style;
+      let selectAreaElementStyle = this.sourceContainerElement.querySelector<HTMLElement>(".dara-multiselect-area")?.style;
 
       if (selectAreaElementStyle) {
         selectAreaElementStyle.height = `calc(100% - ${labelH}px)`;
@@ -49,11 +49,11 @@ export class SourceItem {
     let evtElement = this.sourceElement;
 
     const sEleClassList = sEle.classList;
-    const lastClickEle = evtElement?.querySelector('.pub-select-item[data-last-click="Y"]');
+    const lastClickEle = evtElement?.querySelector('.dara-select-item[data-last-click="Y"]');
     let onlyClickFlag = false;
     if (opts.useMultiSelect === true) {
       if ((evt as KeyboardEvent).shiftKey) {
-        const allItem = evtElement?.querySelectorAll(".pub-select-item");
+        const allItem = evtElement?.querySelectorAll(".dara-select-item");
 
         if (allItem) {
           const beforeIdx = lastClickEle ? Array.from(allItem).indexOf(lastClickEle) : -1;
@@ -86,7 +86,7 @@ export class SourceItem {
       if (utils.isFunction(this.sourceOpt.click)) {
         this.sourceOpt.click.call(sEle, evt, this.multiSelect.config.currentPageItem.findKey(itemUtils.itemValue(sEle)));
       }
-      evtElement?.querySelectorAll(".pub-select-item." + STYLE_CLASS.selected).forEach((element) => {
+      evtElement?.querySelectorAll(".dara-select-item." + STYLE_CLASS.selected).forEach((element) => {
         element.classList.remove(STYLE_CLASS.selected);
       });
 
@@ -101,6 +101,28 @@ export class SourceItem {
       this.multiSelect.setFocus("source");
     });
 
+    // 검색 영역 event 처리.
+    if (this.sourceOpt.search.enable) {
+      const searchTextField = this.sourceContainerElement.querySelector(".input-text") as HTMLInputElement;
+      if (searchTextField) {
+        searchTextField.addEventListener("keyup", (e) => {
+          const evtKey = e.key ?? e.keyCode;
+
+          if (evtKey == "Enter" || evtKey == "13") {
+            if (this.sourceOpt.search.callback) {
+              this.sourceOpt.search.callback.call(null, { keyword: searchTextField.value, evt: e });
+            }
+          }
+        });
+
+        domUtils.eventOn(this.sourceContainerElement.querySelector(".search-button> button"), "click", (e: Event, ele: Element) => {
+          if (this.sourceOpt.search.callback) {
+            this.sourceOpt.search.callback.call(null, { keyword: searchTextField.value, evt: e });
+          }
+        });
+      }
+    }
+
     this.sourceElement.addEventListener("selectstart", (e) => {
       return false;
     });
@@ -112,7 +134,7 @@ export class SourceItem {
 
   public initRowItemEvent() {
     if (this.isSingleMode) return;
-    this.sourceElement.querySelectorAll(".pub-select-item").forEach((element) => {
+    this.sourceElement.querySelectorAll(".dara-select-item").forEach((element) => {
       domUtils.eventOn(element, "click", (e: Event, ele: Element) => {
         this.itemClick(e, ele);
       });
@@ -127,9 +149,9 @@ export class SourceItem {
       });
 
       // add button click
-      domUtils.eventOn(element.querySelector(".pub-multiselect-btn"), "click", (e: Event, ele: Element) => {
+      domUtils.eventOn(element.querySelector(".dara-multiselect-btn"), "click", (e: Event, ele: Element) => {
         this.move({
-          items: [ele.closest(".pub-select-item")],
+          items: [ele.closest(".dara-select-item")],
         });
 
         return false;
@@ -166,7 +188,7 @@ export class SourceItem {
     if (this.sourceOpt.paging.enable) {
       pagingUtil.setPaging(this.multiSelect, this.multiSelect.getPrefix() + "SourcePaging", pagingInfo ?? this.sourceOpt.paging);
 
-      this.sourceContainerElement.querySelectorAll(".pub-multiselect-paging .page-num").forEach((element) => {
+      this.sourceContainerElement.querySelectorAll(".dara-multiselect-paging .page-num").forEach((element) => {
         domUtils.eventOn(element, "click", (e: Event, ele: Element) => {
           const pageno = ele.getAttribute("pageno");
 
@@ -198,7 +220,7 @@ export class SourceItem {
 
   public allRemoveAddItemClass() {
     if (this.isSingleMode) return;
-    domUtils.removeClass(this.sourceElement.querySelectorAll(".pub-select-item"), STYLE_CLASS.addItemCheck);
+    domUtils.removeClass(this.sourceElement.querySelectorAll(".dara-select-item"), STYLE_CLASS.addItemCheck);
   }
 
   public setAddItemCheckStyle(key: string) {
@@ -215,11 +237,11 @@ export class SourceItem {
       end = opt.end;
 
     if (mode == "all") {
-      domUtils.addClass(evtElement.querySelectorAll(".pub-select-item"), STYLE_CLASS.selected);
+      domUtils.addClass(evtElement.querySelectorAll(".dara-select-item"), STYLE_CLASS.selected);
     } else if (mode == "selection") {
-      domUtils.removeClass(evtElement.querySelectorAll(".pub-select-item." + STYLE_CLASS.selected), STYLE_CLASS.selected);
+      domUtils.removeClass(evtElement.querySelectorAll(".dara-select-item." + STYLE_CLASS.selected), STYLE_CLASS.selected);
 
-      const allItem = evtElement.querySelectorAll(".pub-select-item");
+      const allItem = evtElement.querySelectorAll(".dara-select-item");
       for (let i = end; i >= start; i--) {
         domUtils.addClass(allItem[i], STYLE_CLASS.selected);
       }
@@ -243,7 +265,7 @@ export class SourceItem {
     const mainOpts = this.multiSelect.options;
     const limitSize = this.multiSelect.targetItem.getLimitSize();
 
-    const selectVal = opt.items ?? this.sourceElement.querySelectorAll(".pub-select-item.selected:not(.hide)");
+    const selectVal = opt.items ?? this.sourceElement.querySelectorAll(".dara-select-item.selected:not(.hide)");
     const selectLen = selectVal.length;
 
     if (selectLen > 0) {
@@ -331,9 +353,9 @@ export class SourceItem {
     let styleClass = this.multiSelect.config.currentPageItem.contains(seletVal) ? STYLE_CLASS.addItemCheck : "";
 
     return `
-    <li data-val="${seletVal}" class="pub-select-item ${styleClass}" title="${titleText.replace(/["']/g, "")}">
+    <li data-val="${seletVal}" class="dara-select-item ${styleClass}" title="${titleText.replace(/["']/g, "")}">
       <span>${labelTemplate}</span>
-      ${this.sourceOpt.enableAddBtn ? `<button type="button" class="pub-multiselect-btn" data-mode="item-add">${Lanauage.getMessage("add")}</button>` : ""}
+      ${this.sourceOpt.enableAddBtn ? `<button type="button" class="dara-multiselect-btn" data-mode="item-add">${Lanauage.getMessage("add")}</button>` : ""}
       
     </li>`;
   }
