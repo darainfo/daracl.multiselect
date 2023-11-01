@@ -1,5 +1,5 @@
 # MultiSelect
-JavaScript form creation library
+JavaScript multi select library
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/darainfo/dara-multiselect/blob/main/LICENSE)
 [![npm version](https://badge.fury.io/js/dara-multiselect.svg)](https://img.shields.io/npm/v/dara-multiselect)
@@ -30,109 +30,470 @@ npm start
 
 3. Open `http://localhost:8890` in your browser
 
+# 다국어 처리 
+```
+  MultiSelect.setMessage({
+    up: '위',
+    down: '아래',
+    add: '추가',
+    allAdd: '전체추가',
+    remove: '제거',
+    allRemove: '전체제거',
+    maxSizeMsg: "{maxSize} 개 까지 등록 가능합니다.", // 추가 가능한 max size가 넘었을경우 메시지 String
+    duplicate: "이미 등록된 항목이 존재합니다.",
+    addEmptyMessage: "추가할 항목을 선택해주세요.",
+    removeEmptyMessage: "제거할 항목을 선택해주세요.",
+  })
+```
 
 # 사용방법
 ```
-const form = new MultiSelect("#loginForm", {
-    message: "This value is not valid",
-     style: {
-      position: 'top-left',
-      labelWidth: '3'
+const example1 = new MultiSelect('#example1', {
+    mode: 'double'	// single, double
+    , style: {
+      height: 300
+    }
+    , orientation: 'horizontal' // horizontal , vertical
+    , body: {
+      enableMoveBtn: true	// 이동 버튼 보이기 여부
+      , moveBtnSize: 50	// item move button 영역 width 값
+    }
+    , footer: {
+      enable: true
+    }
+    , useMultiSelect: true
+    , useDragMove: true	// drag해서 이동할지 여부.
+    , useDragSort: true // target drag 해서 정렬할지 여부.
+    , enableUpDown: true // updown 버튼 활성화여부.
 
-    },
-    // form load 이후 호출. 
-    onMounted: function () {
-      console.log(this)
-    },
-    message: {
-      empty: "{name} 필수 입력사항입니다.",
-      string: {
-        minLength: "{size} 글자 이상 입력해야합니다.",
-        maxLength: "{size} 글자 이상 입력할 수 없습니다.",
-      },
-      number: {
-        minimum: "{size} 보다 커야 합니다",
-        miximum: "{size} 보다 커야 합니다",
-      },
-      regexp: {
-        email: "이메일이 유효하지 않습니다.",
-        url: "URL이 유효하지 않습니다.",
-      },
-    },
-    fields: [
-      {
-        name: "uid",
-        label: "아이디",
-        tooltip: "아이디를 넣어주세요.",
-        placeholder: "아이디를 넣어주세요.",
-        renderType: "text",
+    , duplicateCheck: true
+    , valueKey: 'viewid'
+    , labelKey: 'uname'
+    , source: {
+      items: []
+      , enableLabel: true
+      , search: {
+        enable: true
+        , callback: (param) => {
+          console.log(param)
+        }
       }
-      , {
-        name: "password",
-        label: "패스워드",
-        description: "비밀번호는 대문자 소문자 포함입니다.",
-        placeholder: "패스워드를 입력하세요",
-        renderType: "password",
+      , completeMove: function (addItems) {
+        console.log('source completeMove fn', JSON.stringify(addItems));
+        return true;
       }
-    ]
+      , paging: {
+        enable: true
+        , unitPage: 10
+        , totalCount: 300
+        , currPage: 15
+        , callback: function (clickInfo) {
+          console.log(clickInfo)
+        }
+      }
+    }
+    , target: {
+      label: 'Target'
+      , enableLabel: true
+      , items: []
+      , limitSize: -1 // 추가 가능한 max size
+      , emptyMessage: 'asdfasdf '
+      , completeMove: function (delItem) {
+        console.log(delItem);
+      }
+      , paging: {
+        enable: true
+        , unitPage: 10
+        , totalCount: 150
+        , currPage: 1
+
+        , callback: function (clickInfo) {
+          console.log(clickInfo)
+        }
+      }
+    }
+
   });
 ```
   
+<style>
+  table td, table th{
+    border: 1px solid #dddd;
+    vertical-align:top;
+  }
+  </style>
 
-# Form 옵션
-| key | 설명 | 기본값 | 옵션값 |
-|-----|------|-----|-----|
-| style |  width: form 넓이<br> labelWidth : label 넓이 <br> valueWidth : value width<br> position : '"[label위치]"-[글자 정렬위치]' <br> -- ex) 'top-left','left-right' |  width: "100%" <br>  labelWidth: 3<br> valueWidth: 9<br> position: "left-right" | position : top,left,right - left,center,right |
-| autoFocus |  포커스 여부 |  true | true , false |
-| notValidMessage |   폼 유효하지 않을때 메시지 |   'This value is not valid'  | |
-| onMounted |  폼 로드후 이벤트 |  |  |
-| fields |  폼필드 [설명](#field-option) | | |
-| message |  폼 유효성 체크 메시지 [설명](#form-message) |  | 
-  
-
-# Form message
-```javascript
-required:  '{name} 필수 입력사항입니다.'
-string: {
-  minLength: '{size} 글자 이상 입력해야합니다.'
-  maxLength: '{size} 글자 이상 입력할 수 없습니다.'
-};
-number: {
-  min: '{size} 보다 커야 합니다'
-  max: '{size} 보다 커야 합니다'
-};
-type: {
-  message: '{type} 유효하지 않습니다.'
-};
-```
-
-# Field Option
-| key | 설명 | 기본값 | 옵션값 |
-|-----|------|-----|-----|
-| name |  field name |   |  |
-| label |  label |   |  |
-| tooltip |  툴팁문구 |   |  |
-| disabled |  비활성화 여부 |   |  |
-| placeholder |  placeholder |   |  |
-| orientation |  차식 field 가 있을경우 방향 | vertical  | horizontal, vertical |
-| required |  필수 여부 |   |  |
-| regexpType |  정규식 타입 |   | email, url, alpha, alpha-num |
-| template | custom value 템플릿 |   |  |
-| listItem |  dropdown, radio, checkbox 옵션값 |   |  |
-| description |  설명 | labelField: label key <br> valueField: value key<br>  list: 옵션 리스트<br>
-  orientation: 방향  |  |
-| children | 자식 field 리스트 |   |  |
-| onChange | 입력값 변경시 호출되는 메소드 |   |  |
-| onClick | button 타입 클릭 이벤트 |   |  |
-| fileDownload | file 타입일경우 다운로드 메소드 |   |  |
-| renderer | custom renderer |   |  |
-| conditional | 보이기 여부 조건 | show: 보이기 여부 <br/>  field: field name <br> eq: 비교 값 <br> custom: custom 체크 메소드   |  |
-| renderType |  render type  | text  | number, text, file, textarea, dropdown, radio, checkbox, date(dara-datetimepicker모듈 사용), group, custom |
-| customOptions |  date 타입등의 추가 module에서 사용하는 추가 옵션 |   |  |
-| style |  width: field 넓이<br> labelHide : label 숨김여부 <br> labelWidth : label 넓이<br>  customClass : custom class <br> valueWidth : value width <br> tabAlign : render type이 tab일 경우 정렬 <br> position : '"[label위치]"-[글자 정렬위치]' <br> -- ex) 'top-left','left-right' |  width: "100%" <br>  labelWidth: 3<br> valueWidth: 9<br> position: "left-right" | position : top,left,right - left,center,right <br> tabAlign:left, center, right|
-| rule |  유효성 규칙 | minLength: 최소 길이 <br>  maxLength: 최대길이<br> minimum: 최소값 <br>    exclusiveMinimum: 최소값 포함 여부 <br> maximum: 최대값 <br>exclusiveMaximum: 최대값 포함여부 |  |
-| different | field 값이 다른지 비교 | field: field name <br> message: 메시지   |  |
-| identical | field 값이 같은지 비교 | field: field name <br> message: 메시지   |  |
+# 옵션
+<table>
+   <thead>
+      <tr>
+         <th></th>
+         <th>설명</th>
+         <th>기본값</th>
+         <th>옵션</th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr>
+         <td>style</td>
+         <td> </td>
+         <td>
+            <table>
+               <thead>
+                  <tr>
+                     <th></th>
+                     <th>설명</th>
+                     <th>기본값</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr>
+                     <td>width</td>
+                     <td> 넓이 </td>
+                     <td>"auto"</td>
+                  </tr>
+                  <tr>
+                     <td>height</td>
+                     <td>높이 </td>
+                     <td>300</td>
+                  </tr>
+               </tbody>
+            </table>
+         </td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>mode</td>
+         <td>mode </td>
+         <td>double</td>
+         <td>single, double</td>
+      </tr>
+      <tr>
+         <td>orientation</td>
+         <td> 방향</td>
+         <td>horizontal</td>
+         <td>horizontal, vertical</td>
+      </tr>
+      <tr>
+         <td>body</td>
+         <td> </td>
+         <td>
+            <table>
+               <thead>
+                  <tr>
+                     <th></th>
+                     <th>설명</th>
+                     <th>기본값</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr>
+                     <td>enableMoveBtn</td>
+                     <td> 이동버튼 보이기 여부 </td>
+                     <td>true</td>
+                  </tr>
+                  <tr>
+                     <td>moveBtnSize</td>
+                     <td> 버튼 width </td>
+                     <td>50</td>
+                  </tr>
+               </tbody>
+            </table>
+         </td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>enableAddEmptyMessage</td>
+         <td> 추가 아이템 없을때 메시지 보이기 여부 </td>
+         <td>false</td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>enableRemoveEmptyMessage</td>
+         <td> 삭제 아이템 없을때 메시지 보이기 여부 </td>
+         <td>false</td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>useMultiSelect</td>
+         <td> 다중 항목 추가 여부 사용여부 </td>
+         <td>true</td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>useDragMove</td>
+         <td> Drag 이동여부 </td>
+         <td>false</td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>useDragSort</td>
+         <td> drag 상하위 이동 가능여부 </td>
+         <td>false</td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>addPosition</td>
+         <td> 추가 위치  </td>
+         <td>bottom</td>
+         <td>bottom, top</td>
+      </tr>
+      <tr>
+         <td>duplicateCheck</td>
+         <td> 중복체크 </td>
+         <td>true</td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>enableUpDown</td>
+         <td> 상하위 이동 버튼 활성화 여부 </td>
+         <td>false</td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>valueKey</td>
+         <td>item value key  </td>
+         <td>code</td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>labelKey</td>
+         <td>item label key </td>
+         <td>name</td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>pageNumKey</td>
+         <td> page number key </td>
+         <td>pageNo</td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>source</td>
+         <td> </td>
+         <td>
+            <table>
+               <thead>
+                  <tr>
+                     <th></th>
+                     <th>설명</th>
+                     <th>기본값</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr>
+                     <td>label</td>
+                     <td> label name </td>
+                     <td></td>
+                  </tr>
+                  <tr>
+                     <td>labelAlign</td>
+                     <td> label 정렬 </td>
+                     <td>center<br> ex:) left, center, right </td>
+                  </tr>
+                  <tr>
+                     <td>enableLabel</td>
+                     <td>label 활성화 여부</td>
+                     <td>false</td>
+                  </tr>
+                  <tr>
+                     <td>enableAddBtn</td>
+                     <td> 추가 버튼 보이기 여부 </td>
+                     <td>true</td>
+                  </tr>
+                  <tr>
+                     <td>emptyMessage</td>
+                     <td> 항목 없을때 메시지 </td>
+                     <td>""</td>
+                  </tr>
+                  <tr>
+                     <td>items</td>
+                     <td> 항목 </td>
+                     <td>[]</td>
+                  </tr>
+                  <tr>
+                     <td>search</td>
+                     <td> </td>
+                     <td>
+                        <table>
+                           <thead>
+                              <tr>
+                                 <th></th>
+                                 <th>설명</th>
+                                 <th>기본값</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              <tr>
+                                 <td>enable</td>
+                                 <td> 검색 활성화 여부 </td>
+                                 <td>false</td>
+                              </tr>
+                               <tr>
+                                 <td>callback</td>
+                                 <td>검색 콜백 </td>
+                                 <td></td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>paging</td>
+                     <td> </td>
+                     <td>
+                        <table>
+                           <thead>
+                              <tr>
+                                 <th></th>
+                                 <th>설명</th>
+                                 <th>기본값</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              <tr>
+                                 <td>enable</td>
+                                 <td> 페이지 활성화 여부 </td>
+                                 <td>false</td>
+                              </tr>
+                              <tr>
+                                 <td>unitPage</td>
+                                 <td>페이지 몇개 보일지 여부 </td>
+                                 <td>10</td>
+                              </tr>
+                              <tr>
+                                 <td>currPage</td>
+                                 <td>현재 페이지 정보 </td>
+                                 <td>1</td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         </td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>target</td>
+         <td> </td>
+         <td>
+            <table>
+               <thead>
+                  <tr>
+                     <th></th>
+                     <th>설명</th>
+                     <th>기본값</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr>
+                     <td>label</td>
+                     <td> label name </td>
+                     <td></td>
+                  </tr>
+                  <tr>
+                     <td>labelAlign</td>
+                     <td> label 정렬 </td>
+                     <td>"center"</td>
+                  </tr>
+                  <tr>
+                     <td>enableLabel</td>
+                     <td> label 활성화 여부 </td>
+                     <td>false</td>
+                  </tr>
+                  <tr>
+                     <td>enableRemoveBtn</td>
+                     <td> 삭제 버튼 보이기 여부 </td>
+                     <td>true</td>
+                  </tr>
+                  <tr>
+                     <td>emptyMessage</td>
+                     <td>항목 없을때 메시지 </td>
+                     <td></td>
+                  </tr>
+                  <tr>
+                     <td>items</td>
+                     <td>항목 </td>
+                     <td>[]</td>
+                  </tr>
+                  <tr>
+                     <td>limitSize</td>
+                     <td> 제한갯수 </td>
+                     <td>-1</td>
+                  </tr>
+                  <tr>
+                     <td>search</td>
+                     <td> </td>
+                     <td>
+                        <table>
+                           <thead>
+                              <tr>
+                                 <th></th>
+                                 <th>설명</th>
+                                 <th>기본값</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              <tr>
+                                 <td>enable</td>
+                                 <td> 검색 활성화 여부  </td>
+                                 <td>false</td>
+                              </tr>
+                              <tr>
+                                 <td>callback</td>
+                                 <td>검색 콜백 </td>
+                                 <td></td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>paging</td>
+                     <td> </td>
+                     <td>
+                        <table>
+                           <thead>
+                              <tr>
+                                 <th></th>
+                                 <th>설명</th>
+                                 <th>기본값</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              <tr>
+                                 <td>enable</td>
+                                 <td> 페이지 활성화 여부 </td>
+                                 <td>false</td>
+                              </tr>
+                              <tr>
+                                 <td>unitPage</td>
+                                 <td> 페이지 몇개 보일지 여부 </td>
+                                 <td>10</td>
+                              </tr>
+                              <tr>
+                                 <td>currPage</td>
+                                 <td> 현재 페이지 정보 </td>
+                                 <td>1</td>
+                              </tr>
+                              <tr>
+                                 <td>enableMultiple</td>
+                                 <td> </td>
+                                 <td>true</td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         </td>
+         <td></td>
+      </tr>
+   </tbody>
+</table>
 
 
 ## License

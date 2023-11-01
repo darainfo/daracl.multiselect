@@ -23,13 +23,10 @@ export interface Options {
   enableAddEmptyMessage: boolean; // item 추가시 없을때 메시지 표시 할지 여부.
   enableRemoveEmptyMessage: boolean; // item 삭제시 없을때 메시지 표시 할지 여부.
   useMultiSelect: boolean; // ctrl , shift key 이용해서 다중 선택하기 여부
-  containment: string; // 경계 영역
   useDragMove: boolean; // drag해서 이동할지 여부.
   useDragSort: boolean; // target drag 해서 정렬할지 여부.
   addPosition: ITEM_ADD_POSITION; // 추가 되는 item 어디 방향으로 추가할지. ex(top, bottom)
   duplicateCheck: boolean; // 중복 추가 여부.
-  enableAddItemCheck: boolean; // 추가된 아이템 표시 여부.
-  items: array; // item
   valueKey: string; // value key
   labelKey: string; //  label key
   pageNumKey: string; // page number key
@@ -85,16 +82,4 @@ export interface Options {
       enableMultiple: boolean; // 페이징 처리를 item 내부의 pageNo 값으로 처리.
     };
   };
-
-  message: {
-    // 방향키 있을때 메시지
-    addEmpty: boolean;
-    delEmpty: boolean;
-    duplicate: boolean;
-  };
-  footer: {
-    enable: boolean;
-  };
-
-  items: array;
 }

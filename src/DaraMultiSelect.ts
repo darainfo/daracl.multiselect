@@ -21,14 +21,11 @@ const defaultOptions = {
   enableAddEmptyMessage: false, // item 추가시 없을때 메시지 표시 할지 여부.
   enableRemoveEmptyMessage: false, // item 삭제시 없을때 메시지 표시 할지 여부.
   useMultiSelect: true, // ctrl , shift key 이용해서 다중 선택하기 여부
-  containment: "", // 경계 영역
   useDragMove: false, // drag해서 이동할지 여부.
   useDragSort: false, // target drag 해서 정렬할지 여부.
   addPosition: "bottom", // 추가 되는 방향키로 추가시 어디를 추가할지. ex(source, last)
   duplicateCheck: true, // 중복 추가 여부.
-  enableAddItemCheck: true, // 추가된 아이템 표시 여부.
   enableUpDown: false, //
-  items: [], // item
   valueKey: "code", // value key
   labelKey: "name", //  label key
   pageNumKey: "pageNo", // page number key
@@ -51,7 +48,7 @@ const defaultOptions = {
     paging: {
       // 다중으로 관리할경우 처리.
       enable: false,
-      unitPage: 1, // max page 값
+      unitPage: 10, // max page 값
       currPage: 1, // 현재 값
     },
   },
@@ -78,15 +75,6 @@ const defaultOptions = {
       currPage: 1, // 현재 값
       enableMultiple: true, // 페이징 처리를 item 내부의 pageNo 값으로 처리.
     },
-  },
-  message: {
-    // 방향키 있을때 메시지
-    addEmpty: false,
-    delEmpty: false,
-    duplicate: false,
-  },
-  footer: {
-    enable: false,
   },
 } as Options;
 
@@ -140,14 +128,13 @@ export default class DaraMultiSelect {
       this.mainElement = mainElement;
 
       this.selector = selector;
-      this.prefix = "pubMultiselect" + utils.getHashCode(selector);
+      this.prefix = "multiselect" + utils.getHashCode(selector);
 
       this.config = {
         currPage: this.options.target.paging.currPage,
         itemKeyInfo: {},
         focus: false,
         focusType: "",
-        addCheckStyle: this.options.enableAddItemCheck === true ? "text-selected" : "",
         allPageItem: {},
         currentPageItem: {},
         dragItems: [],
@@ -183,11 +170,11 @@ export default class DaraMultiSelect {
 
     //updown
     if (this.options.enableUpDown) {
-      domUtils.eventOn(this.mainElement.querySelector('.pubMultiselect-footer > .dara-multiselect-btn[data-mode="up"]'), "click", (e: Event, ele: Element) => {
+      domUtils.eventOn(this.mainElement.querySelector('.vertical-move > .dara-multiselect-btn[data-mode="up"]'), "click", (e: Event, ele: Element) => {
         this.targetItem.up();
       });
 
-      domUtils.eventOn(this.mainElement.querySelector('.pubMultiselect-footer > .dara-multiselect-btn[data-mode="down"]'), "click", (e: Event, ele: Element) => {
+      domUtils.eventOn(this.mainElement.querySelector('.vertical-move > .dara-multiselect-btn[data-mode="down"]'), "click", (e: Event, ele: Element) => {
         this.targetItem.down();
       });
     }
@@ -444,7 +431,6 @@ export default class DaraMultiSelect {
    * @param items {array} items
    */
   public setSourceItems(items: any[], pagingInfo: any) {
-    this.options.source.items = items;
     this.sourceItem.setItems(items, pagingInfo);
   }
 
