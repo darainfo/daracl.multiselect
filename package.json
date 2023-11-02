@@ -1,8 +1,8 @@
 {
   "name": "dara-multiselect",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "sideEffects": false,
-  "description": "Dara multiselect ",
+  "description": "Dara multiselect",
   "author": {
     "name": "darainfo",
     "email": "darainfosys@gmail.com",
@@ -12,7 +12,6 @@
   "keywords": [
     "multiselect",
     "dara",
-    "multiselect",
     "multi-select",
     "darainfo",
     "javascript"

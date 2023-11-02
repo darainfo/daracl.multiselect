@@ -463,6 +463,18 @@ export default class DaraMultiSelect {
     }
   }
 
+  public static instance(selector?: string) {
+    if (utils.isUndefined(selector) || utils.isBlank(selector)) {
+      const keys = Object.keys(allInstance);
+      if (keys.length > 1) {
+        throw new Error(`selector empty : [${selector}]`);
+      }
+      selector = keys[0];
+    }
+
+    return allInstance[selector];
+  }
+
   public destroy = () => {
     this.mainElement.className = this.orginStyleClass;
     this.mainElement.replaceChildren();
