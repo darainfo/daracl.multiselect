@@ -2,25 +2,32 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <title>Dara Form</title>
-
-    <script defer src="../dist/dara.multiselect.js"></script>
+    <meta charset="utf-8" />
+    <title>Dara MultiSelect</title>
 </head>
 
-<body onload="formObj.load()">
 
-    <div>
+<script defer src="../dist/dara.multiselect.js"></script>
+</head>
+
+<body>
+    <div class="header">
         <div class="form-button">
-            <button type="button" onclick="formObj.addItem()">Add</button>
-            <button type="button" onclick="formObj.getValue()">getValue</button>
-            <button type="button" onclick="formBuilder.isValidForm()">valid check</button>
-            <button type="button" onclick="formBuilder.resetForm()">Reset</button>
+            <button type="button" onclick="targetObj.addItems()">Add</button>
+            <button type="button" onclick="targetObj.getTargetItems()">getTargetItems</button>
+        </div>
+
+        <div>
+            Theme : <label>Light<input type="radio" name="theme-toggle" value="light" checked="true"></label>
+            <label>Dark<input type="radio" name="theme-toggle" value="dark"></label>
         </div>
     </div>
 
-    <div style="padding: 20px;">
-        <form id="formArea"></form>
+    <div style="padding: 0px 20px">
+        <div id="example1"></div>
+
+        <div id="example2"></div>
+
     </div>
 </body>
 
@@ -28,315 +35,183 @@
 <style>
     .form-button {
         text-align: center;
+    }
 
+    :root {
+        --bg: #ffffff;
+        --bg-color: #070d19;
+
+    }
+
+    body.dark {
+        --bg: #070d19;
+        --bg-color: #ffffff;
+
+    }
+
+    body {
+        background-color: var(--bg);
+    }
+
+    .header {
+        color: var(--bg-color);
     }
 </style>
-<script>
-    var formInfo = {
-        message: 'This value is not valid',
-        mode: 'horizontal',
-        //mode: 'vertical',
-        //width: '600px',
-        //autoFocus: false,
-        labelWidth: '150px',
-        message: {
-            empty: '{name} 필수 입력사항입니다.',
-            "string": {
-                minLength: '{size} 글자 이상 입력해야합니다.'
-                , maxLength: '{size} 글자 이상 입력할 수 없습니다.'
-            }
-            , "number": {
-                minimum: '{size} 보다 커야 합니다'
-                , miximum: '{size} 보다 커야 합니다'
-            }
-            , "regexp": {
-                email: '이메일이 유효하지 않습니다.'
-                , url: 'URL이 유효하지 않습니다.'
-            }
-        }
-        , fields: [
-            {
-                name: 'hiddenMode'
-                , renderType: 'hidden'
-                , defaultValue: 'asdf'
-            }
-            , {
-                name: 'uid'
-                , label: '아이디'
-                , tooltip: '아이디를 넣어주세요.'
-                , description: '설명설명설명'
-                , placeholder: "아이디를 넣어주세요."
-                , required: true
-                , rule: {
-                    minLength: 3
-                    , maxLength: 100
-                }
-                , validator: (param => {
+<script type="module">
 
-                })
-            }
-            , {
-                name: 'uname'
-                , label: '이름'
-                , required: true
-                , rule: {
-                    minLength: 2,
-                    maxLength: 100
-                }
-                , onChange: (arg) => {
-                    console.log(arg);
-                }
-            }
-            , {
-                name: 'birth2'
-                , label: '생년월일2'
-                , required: true
-                , renderType: 'date'
-                , customOptions: {
-                    isEmbed: false
-                    , mode: 'datetime'
-                    , initialDate: new Date()
-                }
-                , onChange: (arg) => {
-                    console.log(arg);
-                }
-            }
+    const THEME_KEY = "form-theme";
+    const theme = localStorage.getItem(THEME_KEY);
 
-            , {
-                label: '주소'
-                , viewMode: 'vertical'  // 'vertical , horizontal'
-                , children: [
-                    {
-                        name: 'newAddress'
-                        , label: '신규주소여부'
-                        , hideLabel: true
-                        , required: true
-                        , renderType: 'checkbox'
-                        , values: [
-                            { label: 'option1', selected: true }
-                        ]
-                        , onChange: (arg) => {
-                            console.log(arg);
-                        }
-                    }
-                    , {
-                        name: 'address'
-                        , label: '주소'
-                        , hideLabel: true
-                        , required: true
-                        , rule: {
-                            minLength: 2,
-                            maxLength: 100
-                        }
-                        , conditional: {
-                            show: true,
-                            custom: function () {
-                                return true;
-                            }
-                        }
-                    }
-                    , {
-                        name: 'address2'
-                        , label: '주소1'
-                        , hideLabel: true
-                        , required: true
-                        , rule: {
-                            minLength: 2,
-                            maxLength: 100
-                        }
-                        , conditional: {
-                            show: false,
-                            field: 'newAddress',
-                            eq: true,
-                            //custom?: OptionCallback
-                        }
-                    }
-                    , {
-                        name: 'hiddenMode1'
-                        , renderType: 'text'
-                        , label: '주소 하위1'
-                        , childLabelWidth: '10%'
-                        , viewMode: 'horizontal'  // 'vertical , horizontal, horizontal-row'
-                        , hideLabel: true
-                        , children: [
-                            {
-                                name: 'address22222'
-                                , label: '주소1'
-                                , labelWidth: '150px'
-                                , renderType: 'text'
-                            }
-                            , {
-                                name: 'address222333322'
-                                , label: '주소2'
-                                , renderType: 'text'
-                            }
-                        ]
+    if (theme) setMainTheme(theme);
 
-                    }
-                    , {
-                        label: '버튼'
-                        , hideLabel: true
-                        , renderType: 'button'
-                        , onClick: (arg) => {
-                            console.log(arg);
-                        }
-                    }
-                ]
-            }
-            , {
-                name: 'uemail'
-                , label: '이메일'
-                , required: true
-                , regexpType: 'email'
-                , rule: {
-                    maxLength: 100
-                }
-                , typeMessage: 'The input is not a valid email address'
-                , isValid: function (fieldInfo) {
+    function setMainTheme(theme, persist = false) {
+        const classList = document.body.classList;
 
-                }
+        classList.remove("light", "dark");
 
-                , conditional: {
-                    show: false,
-                    field: 'newAddress',
-                    eq: true,
-                    //custom?: OptionCallback
-                }
-            }
-            , {
-                name: 'age'
-                , label: '나이'
-                , renderType: 'range'
-                , required: true
-                , rule: {
-                    minimum: 0,
-                    maximum: 200
-                }
-                , defaultValue: 0
-                , typeMessage: 'The input is not a valid email address'
-                , isValid: function (fieldInfo) {
+        classList.add(theme);
 
-                }
-            }
-            , {
-                name: 'upw'
-                , label: '비밀번호'
-                , renderType: 'password'
-                , regexpType: 'number-char'
-                , rule: {
-                    minLength: 8
-                }
-                , different: {
-                    field: 'uid',
-                    message: '아이디와 달라야 합니다.'
-                }
-            }
-            , {
-                name: 'confirmUpw'
-                , label: '비밀번호'
-                , renderType: 'password'
-                , identical: {
-                    field: 'upw',
-                    message: '비밀번호가 같아야합니다.'
-                }
-            }
-            , {
-                name: 'file'
-                , label: '사진'
-                , renderType: 'file'
-                , required: true
-                , values: [
-                    { fileId: 'test', fileName: 'aaa.zip' }
-                    , { fileId: 'test', fileName: 'bbb.zip' }
-                ]
-            }
-            , {
-                name: 'dropdown'
-                , label: '드랍다운'
-                , renderType: 'dropdown'
-                , required: true
-                , values: [
-                    { label: 'All', value: '' }
-                    , { label: 'option1', value: '1', selected: true }
-                    , { label: 'option2', value: '2' }
-                ]
-            }
-            , {
-                name: 'useYn'
-                , label: '사용여부'
-                , required: true
-                , renderType: 'radio'
-                , values: [
-                    { label: 'Y', value: 'Y', selected: true }
-                    , { label: 'N', value: 'N' }
-                ]
-            }
-            , {
-                name: 'check'
-                , label: 'checkbox'
-                , required: true
-                , renderType: 'checkbox'
-                , values: [
-                    { label: 'option1', value: '1' }
-                    , { label: 'option2', value: '2' }
-                    , { label: 'option3', value: '3' }
-                ]
-            }
-            , {
-                name: 'birth'
-                , label: '생년월일'
-                , required: true
-                , renderType: 'date'
-                , customOptions: {
-                    isEmbed: false
-                    , mode: 'datetime'
-                    , initialDate: new Date()
-                }
-                , onChange: (arg) => {
-                    console.log(arg);
-                }
-            }
-            , {
-                name: 'textarea'
-                , label: '텍스트 area'
-                , placeholder: '신규주소 선택하'
-                , renderType: 'textarea'
-            }
-            , {
-                name: "customField"
-                , label: 'custom Render'
-                , renderType: 'custom'
-                , renderer: {
-                    template: () => {
-                        return 'asdfawefwafwaef'
-                    }
-                    , getValue: () => {
-                        return 'custom field value';
-                    }
-                }
-            }
-        ]
-    };
-
-    var rowIdx = 0;
-    var formBuilder;
-    var formObj = {
-        load: () => {
-            formBuilder = new DaraMultiSelect("#formArea", formInfo);
-        }
-        , addItem: () => {
-            rowIdx += 1;
-            formBuilder.addField({
-                name: `addItem${rowIdx}`
-                , label: `추가컬럼${rowIdx}`
-                , maxLength: 100
-                , required: true
-            });
-        }
-        , getValue: () => {
-            alert(JSON.stringify(formBuilder.getValue()));
+        if (persist) {
+            localStorage.setItem(THEME_KEY, theme);
         }
     }
 
+    function load() {
+        // theme
+        const toggler = document.querySelectorAll('[name="theme-toggle"]');
+        const theme = localStorage.getItem(THEME_KEY);
 
+        if (toggler) {
+            if (theme === "dark") {
+                document.querySelector('[name="theme-toggle"][value="dark"]').checked = true;
+            }
+
+            toggler.forEach((el) => {
+                el.addEventListener("click", (e) => {
+                    setMainTheme(el.value, true);
+                });
+            })
+        }
+    }
+    load();
+
+
+    let tmpSourceItem = [], paramSourceItem = [];
+
+    for (let i = 0; i < 10; i++) {
+        tmpSourceItem.push({ viewid: '1000' + i, uname: 'nawefawefawefefefefefefeffawfeamenawefawefawefefefefefefeffawfeame' + i });
+    }
+
+    let paramTargetItem = [];
+    for (let i = 0; i < 10; i++) {
+        paramSourceItem.push({ viewid: '0000' + i, uname: 'aaaa' + i });
+    }
+
+    paramTargetItem.push({ viewid: '00000', uname: 'nawefawefawefefefefefefeffawfeamenawefawefawefefefefefefeffawfeame', pageNo: 0 });
+    for (let i = 0; i < 5; i++) {
+        let pageNum = 0;
+        if (i > 3) {
+            pageNum = 4;
+        }
+        paramTargetItem.push({ viewid: '0000' + i, uname: 'name' + i, pageNo: pageNum });
+    }
+
+
+    MultiSelect.setMessage({
+        up: '위',
+        down: '아래',
+        add: '추가',
+        allAdd: '전체추가',
+        remove: '제거',
+        allRemove: '전체제거',
+        maxSizeMsg: "{maxSize} 개 까지 등록 가능합니다.", // 추가 가능한 max size가 넘었을경우 메시지 String
+        duplicate: "이미 등록된 항목이 존재합니다.",
+        addEmptyMessage: "추가할 항목을 선택해주세요.",
+        removeEmptyMessage: "제거할 항목을 선택해주세요.",
+    })
+
+    const example1 = new MultiSelect('#example1', {
+        mode: 'double'	// single, double
+        , style: {
+            height: 300
+        }
+        , orientation: 'horizontal' // horizontal , vertical
+        , body: {
+            enableMoveBtn: true	// 이동 버튼 보이기 여부
+            , moveBtnSize: 50	// item move button 영역 width 값
+        }
+        , footer: {
+            enable: true
+        }
+        , useMultiSelect: true
+        , useDragMove: true	// drag해서 이동할지 여부.
+        , useDragSort: true // target drag 해서 정렬할지 여부.
+        , enableUpDown: true // updown 버튼 활성화여부.
+
+        , duplicateCheck: true
+        , valueKey: 'viewid'
+        , labelKey: 'uname'
+        , source: {
+            items: paramSourceItem
+            , enableLabel: true
+            , search: {
+                enable: true
+                , callback: (param) => {
+                    console.log(param)
+                }
+            }
+            , completeMove: function (addItems) {
+                console.log('source completeMove fn', JSON.stringify(addItems));
+                return true;
+            }
+            , paging: {
+                enable: true
+                , unitPage: 10
+                , totalCount: 300
+                , currPage: 15
+                , callback: function (clickInfo) {
+                    console.log(clickInfo)
+                }
+            }
+        }
+        , target: {
+            label: 'Target'
+            , enableLabel: true
+            , items: []
+            , limitSize: -1 // 추가 가능한 max size
+            , emptyMessage: 'asdfasdf '
+            , completeMove: function (delItem) {
+                console.log(delItem);
+            }
+            , paging: {
+                enable: true
+                , unitPage: 10
+                , totalCount: 150
+                , currPage: 1
+                // 페이징 없이 카운트만 보일수 있게 처리.
+
+                , callback: function (clickInfo) {
+                    console.log(clickInfo)
+                }
+            }
+        }
+
+    });
+
+
+
+    example1.setTargetItems(paramTargetItem);
+
+    const targetObj = {
+        getTargetItems: () => {
+            console.log(example1.getTargetItems());
+            return;
+        }
+
+        , addItems: () => {
+            example1.setTargetItems(paramTargetItem);
+        }
+    }
+    window.targetObj = targetObj;
+    window.example1 = example1;
 </script>
