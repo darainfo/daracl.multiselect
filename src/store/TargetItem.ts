@@ -95,18 +95,6 @@ export class TargetItem {
         return false;
       });
     });
-
-    /*
-    // item double click
-    domUtils.eventOn(this.targetElement, "dblclick", ".dara-select-item", (e: Event, ele: Element) => {
-      if (utils.isFunction(this.targetOpt.dblclick)) {
-        if (this.targetOpt.dblclick.call(ele, e, this.multiSelect.config.currentPageItem.getItem(itemUtils.itemValue(ele))) === false) {
-          return false;
-        }
-      }
-      this.move();
-    });
-    */
   }
 
   public itemClick(evt: Event, sEle: Element) {
@@ -300,7 +288,7 @@ export class TargetItem {
     const currPageNo = pagingInfo?.currPage ?? this.multiSelect.config.currPage;
     const len = items.length;
 
-    if (mode === "init") {
+    if (mode !== "add") {
       this.multiSelect.config.allPageItem = {};
       this.multiSelect.sourceItem.allRemoveAddItemClass();
       this.multiSelect._changePageInfo(currPageNo, true);

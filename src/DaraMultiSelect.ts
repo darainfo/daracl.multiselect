@@ -247,7 +247,7 @@ export default class DaraMultiSelect {
       height = isNaN(opts.style.height) ? this.mainElement.offsetHeight : opts.style.height;
     const enableMoveBtn = opts.body.enableMoveBtn;
 
-    let bodyHeight = height - (opts.footer.enable ? 30 : 0);
+    let bodyHeight = height - (opts.enableUpDown ? 30 : 0);
 
     strHtm.push('<div id="' + this.prefix + '" style="width:' + width + ';" class="dara-multiselect">');
     strHtm.push('	<div class="dara-multiselect-body horizontal">');
@@ -312,7 +312,7 @@ export default class DaraMultiSelect {
     }
 
     // footer
-    if (this.options.enableUpDown === true) {
+    if (opts.enableUpDown === true) {
       strHtm.push('	<div class="vertical-move">');
       strHtm.push('		<button type="button" class="dara-multiselect-btn" data-mode="up" style="margin-right:5px;">' + Lanauage.getMessage("up") + "</button>");
       strHtm.push('		<button type="button" class="dara-multiselect-btn" data-mode="down">' + Lanauage.getMessage("down") + "</button>");
