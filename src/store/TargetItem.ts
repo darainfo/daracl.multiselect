@@ -1,15 +1,12 @@
-import { Options } from "@t/Options";
 import DaraMultiSelect from "src/DaraMultiSelect";
 import { STYLE_CLASS } from "src/constants";
 import Lanauage from "src/util/Lanauage";
 import domUtils from "src/util/domUtils";
 import utils from "src/util/utils";
-import { Paging } from "@t/Paging";
 import { PageItem } from "./PageItem";
 import pagingUtil from "src/util/pagingUtil";
 import itemUtils from "src/util/itemUtils";
 import searchUtil from "src/util/searchUtil";
-import { DaraElement } from "src/util/domCtrl";
 
 export class TargetItem {
   private multiSelect;

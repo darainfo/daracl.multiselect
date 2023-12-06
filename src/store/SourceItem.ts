@@ -5,7 +5,6 @@ import itemUtils from "src/util/itemUtils";
 import utils from "src/util/utils";
 import { STYLE_CLASS } from "src/constants";
 import pagingUtil from "src/util/pagingUtil";
-import { Paging } from "@t/Paging";
 
 export class SourceItem {
   private multiSelect;

@@ -127,7 +127,6 @@ export default class DaraMultiSelect {
       this.selector = selector;
       this.mainElement = mainElement;
 
-      this.selector = selector;
       this.prefix = "multiselect" + utils.getHashCode(selector);
 
       this.config = {
