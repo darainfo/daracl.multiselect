@@ -7,6 +7,8 @@ import { SourceItem } from "./store/SourceItem";
 import { TargetItem } from "./store/TargetItem";
 import domUtils from "./util/domUtils";
 
+declare const APP_VERSION: string;
+
 const defaultOptions = {
   style: {
     width: "auto",
@@ -97,6 +99,7 @@ const allInstance: ComponentMap = {};
  * @typedef {DaraMultiSelect}
  */
 export default class DaraMultiSelect {
+  public static VERSION = `${APP_VERSION}`;
   public options;
 
   private orginStyleClass;
