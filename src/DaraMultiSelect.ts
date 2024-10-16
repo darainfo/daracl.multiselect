@@ -122,7 +122,7 @@ export default class DaraMultiSelect {
       this.options = utils.objectMerge({}, defaultOptions, options);
 
       this.orginStyleClass = mainElement.className;
-      mainElement.classList.add("dara-multiselect");
+      mainElement.classList.add("daracl-multiselect");
 
       if (this.options.style.width) {
         mainElement.setAttribute("style", `width:${this.options.style.width};`);
@@ -160,23 +160,23 @@ export default class DaraMultiSelect {
   initEvt() {
     if (this.options.mode == "double") {
       // 추가 버튼
-      domUtils.eventOn(this.mainElement.querySelector('.dara-multiselect-move-btn > .dara-multiselect-btn[data-mode="add"]'), "click", (e: Event, ele: Element) => {
+      domUtils.eventOn(this.mainElement.querySelector('.daracl-multiselect-move-btn > .daracl-multiselect-btn[data-mode="add"]'), "click", (e: Event, ele: Element) => {
         this.sourceItem.move();
       });
 
       // 제거 버튼
-      domUtils.eventOn(this.mainElement.querySelector('.dara-multiselect-move-btn > .dara-multiselect-btn[data-mode="remove"]'), "click", (e: Event, ele: Element) => {
+      domUtils.eventOn(this.mainElement.querySelector('.daracl-multiselect-move-btn > .daracl-multiselect-btn[data-mode="remove"]'), "click", (e: Event, ele: Element) => {
         this.targetItem.move();
       });
     }
 
     //updown
     if (this.options.enableUpDown) {
-      domUtils.eventOn(this.mainElement.querySelector('.vertical-move > .dara-multiselect-btn[data-mode="up"]'), "click", (e: Event, ele: Element) => {
+      domUtils.eventOn(this.mainElement.querySelector('.vertical-move > .daracl-multiselect-btn[data-mode="up"]'), "click", (e: Event, ele: Element) => {
         this.targetItem.up();
       });
 
-      domUtils.eventOn(this.mainElement.querySelector('.vertical-move > .dara-multiselect-btn[data-mode="down"]'), "click", (e: Event, ele: Element) => {
+      domUtils.eventOn(this.mainElement.querySelector('.vertical-move > .daracl-multiselect-btn[data-mode="down"]'), "click", (e: Event, ele: Element) => {
         this.targetItem.down();
       });
     }
@@ -251,8 +251,8 @@ export default class DaraMultiSelect {
 
     let bodyHeight = height - (opts.enableUpDown ? 30 : 0);
 
-    strHtm.push('<div id="' + this.prefix + '" style="width:' + width + ';" class="dara-multiselect">');
-    strHtm.push('	<div class="dara-multiselect-body horizontal">');
+    strHtm.push('<div id="' + this.prefix + '" style="width:' + width + ';" class="daracl-multiselect">');
+    strHtm.push('	<div class="daracl-multiselect-body horizontal">');
     strHtm.push("		<table>");
     strHtm.push("		<colgroup>");
     if (opts.mode == "single") {
@@ -277,22 +277,22 @@ export default class DaraMultiSelect {
         strHtm.push(this.getLabelHtml("source"));
       }
 
-      strHtm.push('						 <div class="dara-multiselect-area ' + (opts.source.enableAddBtn ? " show-row-item-btn " : "") + (opts.source.enableLabel ? "" : "header-hide") + '"><ul class="dara-multiselect-items" data-type="source"></ul></div>');
+      strHtm.push('						 <div class="daracl-multiselect-area ' + (opts.source.enableAddBtn ? " show-row-item-btn " : "") + (opts.source.enableLabel ? "" : "header-hide") + '"><ul class="daracl-multiselect-items" data-type="source"></ul></div>');
 
       strHtm.push("					   </div>");
 
       if (opts.source.paging.enable) {
-        strHtm.push(' <div id="' + this.prefix + 'SourcePaging" class="dara-multiselect-paging"></div>');
+        strHtm.push(' <div id="' + this.prefix + 'SourcePaging" class="daracl-multiselect-paging"></div>');
       }
 
       strHtm.push("					 </div>");
       strHtm.push("					</td>");
 
-      strHtm.push('					<td class="dara-multiselect-move-btn">');
+      strHtm.push('					<td class="daracl-multiselect-move-btn">');
 
       if (enableMoveBtn) {
-        strHtm.push('						<button type="button" style="margin-bottom:5px;" class="dara-multiselect-btn" data-mode="add" title="' + Lanauage.getMessage("add") + '"></button><br/>');
-        strHtm.push('						<button type="button" class="dara-multiselect-btn" data-mode="remove" title="' + Lanauage.getMessage("remove") + '"></button>');
+        strHtm.push('						<button type="button" style="margin-bottom:5px;" class="daracl-multiselect-btn" data-mode="add" title="' + Lanauage.getMessage("add") + '"></button><br/>');
+        strHtm.push('						<button type="button" class="daracl-multiselect-btn" data-mode="remove" title="' + Lanauage.getMessage("remove") + '"></button>');
       }
 
       strHtm.push("					</td>");
@@ -306,18 +306,18 @@ export default class DaraMultiSelect {
       strHtm.push(this.getLabelHtml("target"));
     }
 
-    strHtm.push('						<div class="dara-multiselect-area ' + (opts.target.enableRemoveBtn ? " show-row-item-btn " : "") + (opts.target.enableLabel ? "" : "header-hide") + '"><ul class="dara-multiselect-items" data-type="target"></ul></div>');
+    strHtm.push('						<div class="daracl-multiselect-area ' + (opts.target.enableRemoveBtn ? " show-row-item-btn " : "") + (opts.target.enableLabel ? "" : "header-hide") + '"><ul class="daracl-multiselect-items" data-type="target"></ul></div>');
     strHtm.push("					  </div>");
 
     if (opts.target.paging.enable) {
-      strHtm.push('	<div id="' + this.prefix + 'TargetPaging" class="dara-multiselect-paging"></div>');
+      strHtm.push('	<div id="' + this.prefix + 'TargetPaging" class="daracl-multiselect-paging"></div>');
     }
 
     // footer
     if (opts.enableUpDown === true) {
       strHtm.push('	<div class="vertical-move">');
-      strHtm.push('		<button type="button" class="dara-multiselect-btn" data-mode="up" style="margin-right:5px;">' + Lanauage.getMessage("up") + "</button>");
-      strHtm.push('		<button type="button" class="dara-multiselect-btn" data-mode="down">' + Lanauage.getMessage("down") + "</button>");
+      strHtm.push('		<button type="button" class="daracl-multiselect-btn" data-mode="up" style="margin-right:5px;">' + Lanauage.getMessage("up") + "</button>");
+      strHtm.push('		<button type="button" class="daracl-multiselect-btn" data-mode="down">' + Lanauage.getMessage("down") + "</button>");
       strHtm.push("	</div>");
     }
 
@@ -348,8 +348,8 @@ export default class DaraMultiSelect {
     bodyHeight = bodyHeight - (enableMoveBtn ? moveBtnSize : 0);
 
     const labelHalfHeight = opts.source.enableLabel === false ? 36 / 2 : 0;
-    strHtm.push('<div id="' + this.prefix + '" style="width:' + width + ';" class="dara-multiselect">');
-    strHtm.push('	<div class="dara-multiselect-body vertical">'); // body start
+    strHtm.push('<div id="' + this.prefix + '" style="width:' + width + ';" class="daracl-multiselect">');
+    strHtm.push('	<div class="daracl-multiselect-body vertical">'); // body start
 
     if (opts.mode != "single") {
       strHtm.push('<div style="height:' + (bodyHeight / 2 - labelHalfHeight) + 'px;" data-item-type="source">');
@@ -358,17 +358,17 @@ export default class DaraMultiSelect {
         strHtm.push(this.getLabelHtml("source"));
       }
 
-      strHtm.push('	<div class="dara-multiselect-area ' + (opts.source.enableAddBtn ? " show-row-item-btn " : "") + (opts.source.enableLabel ? "" : "header-hide") + '"><ul class="dara-multiselect-items" data-type="source"></ul></div>');
+      strHtm.push('	<div class="daracl-multiselect-area ' + (opts.source.enableAddBtn ? " show-row-item-btn " : "") + (opts.source.enableLabel ? "" : "header-hide") + '"><ul class="daracl-multiselect-items" data-type="source"></ul></div>');
       strHtm.push("</div>");
 
       if (opts.source.paging.enable) {
-        strHtm.push(' <div id="' + this.prefix + 'SourcePaging" class="dara-multiselect-paging"></div>');
+        strHtm.push(' <div id="' + this.prefix + 'SourcePaging" class="daracl-multiselect-paging"></div>');
       }
 
       if (enableMoveBtn) {
-        strHtm.push('<div class="dara-multiselect-move-btn" style="height:' + moveBtnSize + "px;line-height:" + moveBtnSize + 'px;">');
-        strHtm.push('	<button type="button" style="margin-bottom:5px;" class="dara-multiselect-btn" data-mode="add" title="' + Lanauage.getMessage("add") + '">' + Lanauage.getMessage("add") + "</button>");
-        strHtm.push('	<button type="button" class="dara-multiselect-btn" data-mode="del" title="' + Lanauage.getMessage("remove") + '">' + Lanauage.getMessage("remove") + "</button>");
+        strHtm.push('<div class="daracl-multiselect-move-btn" style="height:' + moveBtnSize + "px;line-height:" + moveBtnSize + 'px;">');
+        strHtm.push('	<button type="button" style="margin-bottom:5px;" class="daracl-multiselect-btn" data-mode="add" title="' + Lanauage.getMessage("add") + '">' + Lanauage.getMessage("add") + "</button>");
+        strHtm.push('	<button type="button" class="daracl-multiselect-btn" data-mode="del" title="' + Lanauage.getMessage("remove") + '">' + Lanauage.getMessage("remove") + "</button>");
         strHtm.push("</div>");
       }
     }
@@ -379,13 +379,13 @@ export default class DaraMultiSelect {
       strHtm.push(this.getLabelHtml("target"));
     }
 
-    strHtm.push('  <div class="dara-multiselect-area ' + (opts.target.enableRemoveBtn ? " show-row-item-btn " : "") + (opts.target.enableLabel ? "" : "header-hide") + '"><ul class="dara-multiselect-items" data-type="target"></ul></div>');
+    strHtm.push('  <div class="daracl-multiselect-area ' + (opts.target.enableRemoveBtn ? " show-row-item-btn " : "") + (opts.target.enableLabel ? "" : "header-hide") + '"><ul class="daracl-multiselect-items" data-type="target"></ul></div>');
     strHtm.push(" </div>");
 
     // 페이지 정보
 
     if (opts.target.paging.enable) {
-      strHtm.push('	<div id="' + this.prefix + 'TargetPaging" class="dara-multiselect-paging"></div>');
+      strHtm.push('	<div id="' + this.prefix + 'TargetPaging" class="daracl-multiselect-paging"></div>');
     }
 
     strHtm.push("</div>"); // body end
@@ -393,8 +393,8 @@ export default class DaraMultiSelect {
     // footer
     if (this.options.enableUpDown === true) {
       strHtm.push('	<div class="vertical-move">');
-      strHtm.push('		<button type="button" class="dara-multiselect-btn" data-mode="up" style="margin-right:5px;">' + Lanauage.getMessage("up") + "</button>");
-      strHtm.push('		<button type="button" class="dara-multiselect-btn" data-mode="down">' + Lanauage.getMessage("down") + "</button>");
+      strHtm.push('		<button type="button" class="daracl-multiselect-btn" data-mode="up" style="margin-right:5px;">' + Lanauage.getMessage("up") + "</button>");
+      strHtm.push('		<button type="button" class="daracl-multiselect-btn" data-mode="down">' + Lanauage.getMessage("down") + "</button>");
       strHtm.push("	</div>");
     }
 
@@ -410,7 +410,7 @@ export default class DaraMultiSelect {
     }
 
     const strHtm = [];
-    strHtm.push('<div class="dara-multiselect-label al-' + labelOpt.labelAlign + '">');
+    strHtm.push('<div class="daracl-multiselect-label al-' + labelOpt.labelAlign + '">');
 
     if (labelOpt.search && labelOpt.search.enable === true) {
       if (labelOpt.label) {
@@ -418,7 +418,7 @@ export default class DaraMultiSelect {
       }
 
       strHtm.push('<input type="text" class="input-text">');
-      strHtm.push('<span class="search-button"><button type="button" class="dara-multiselect-btn">Search</button></span>');
+      strHtm.push('<span class="search-button"><button type="button" class="daracl-multiselect-btn">Search</button></span>');
     } else {
       strHtm.push('<span class="label-text" style="width:100%;display:block;">' + labelOpt.label + "</span>");
     }

@@ -21,7 +21,7 @@ module.exports = {
   entry: "./src/index.ts",
   output: {
     path: path.join(__dirname, "dist"),
-    filename: "dara.multiselect.js",
+    filename: "daracl.multiselect.js",
     libraryTarget: "umd",
   },
 

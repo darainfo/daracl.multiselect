@@ -25,13 +25,13 @@ export class TargetItem {
   }
 
   init() {
-    let labelEle = this.targetContainerElement.querySelector<HTMLElement>(".dara-multiselect-label");
+    let labelEle = this.targetContainerElement.querySelector<HTMLElement>(".daracl-multiselect-label");
 
     if (labelEle) {
       let labelH = labelEle.offsetHeight;
       labelH = labelH > 30 ? labelH + 5 : 0;
 
-      let selectAreaElementStyle = this.targetContainerElement.querySelector<HTMLElement>(".dara-multiselect-area")?.style;
+      let selectAreaElementStyle = this.targetContainerElement.querySelector<HTMLElement>(".daracl-multiselect-area")?.style;
       if (selectAreaElementStyle) {
         selectAreaElementStyle.height = `calc(100% - ${labelH}px)`;
       }
@@ -84,9 +84,9 @@ export class TargetItem {
       });
 
       // remove button click
-      domUtils.eventOn(element.querySelector(".dara-multiselect-btn"), "click", (e: Event, ele: Element) => {
+      domUtils.eventOn(element.querySelector(".daracl-multiselect-btn"), "click", (e: Event, ele: Element) => {
         this.move({
-          items: [ele.closest(".dara-select-item")],
+          items: [ele.closest(".daracl-select-item")],
         });
 
         return false;
@@ -100,11 +100,11 @@ export class TargetItem {
     let evtElement = this.targetElement;
 
     const sEleClassList = sEle.classList;
-    const lastClickEle = evtElement?.querySelector('.dara-select-item[data-last-click="Y"]');
+    const lastClickEle = evtElement?.querySelector('.daracl-select-item[data-last-click="Y"]');
     let onlyClickFlag = false;
     if (opts.useMultiSelect === true) {
       if ((evt as KeyboardEvent).shiftKey) {
-        const allItem = evtElement?.querySelectorAll(".dara-select-item");
+        const allItem = evtElement?.querySelectorAll(".daracl-select-item");
 
         if (allItem) {
           const beforeIdx = lastClickEle ? Array.from(allItem).indexOf(lastClickEle) : -1;
@@ -137,7 +137,7 @@ export class TargetItem {
       if (utils.isFunction(this.targetOpt.click)) {
         this.targetOpt.click.call(sEle, evt, this.multiSelect.config.currentPageItem.findKey(itemUtils.itemValue(sEle)));
       }
-      evtElement?.querySelectorAll(".dara-select-item." + STYLE_CLASS.selected).forEach((element) => {
+      evtElement?.querySelectorAll(".daracl-select-item." + STYLE_CLASS.selected).forEach((element) => {
         element.classList.remove(STYLE_CLASS.selected);
       });
 
@@ -185,11 +185,11 @@ export class TargetItem {
       end = opt.end;
 
     if (mode == "all") {
-      domUtils.addClass(evtElement.querySelectorAll(".dara-select-item"), STYLE_CLASS.selected);
+      domUtils.addClass(evtElement.querySelectorAll(".daracl-select-item"), STYLE_CLASS.selected);
     } else if (mode == "selection") {
-      domUtils.removeClass(evtElement.querySelectorAll(".dara-select-item." + STYLE_CLASS.selected), STYLE_CLASS.selected);
+      domUtils.removeClass(evtElement.querySelectorAll(".daracl-select-item." + STYLE_CLASS.selected), STYLE_CLASS.selected);
 
-      const allItem = evtElement.querySelectorAll(".dara-select-item");
+      const allItem = evtElement.querySelectorAll(".daracl-select-item");
       for (let i = end; i >= start; i--) {
         domUtils.addClass(allItem[i], STYLE_CLASS.selected);
       }
@@ -206,7 +206,7 @@ export class TargetItem {
   }
 
   public getSelectionElements() {
-    return this.targetElement.querySelectorAll(".dara-select-item.selected:not(.hide)");
+    return this.targetElement.querySelectorAll(".daracl-select-item.selected:not(.hide)");
   }
 
   /**
@@ -362,7 +362,7 @@ export class TargetItem {
     if (this.targetOpt.paging.enable) {
       pagingUtil.setPaging(this.multiSelect, this.multiSelect.getPrefix() + "TargetPaging", pagingInfo ?? this.targetOpt.paging);
 
-      this.targetContainerElement.querySelectorAll(".dara-multiselect-paging .page-num").forEach((element) => {
+      this.targetContainerElement.querySelectorAll(".daracl-multiselect-paging .page-num").forEach((element) => {
         domUtils.eventOn(element, "click", (e: Event, ele: Element) => {
           const pageno = ele.getAttribute("pageno");
 
@@ -388,8 +388,8 @@ export class TargetItem {
     }
 
     return `
-    <li data-new-item data-pageno="${tmpItem[this.multiSelect.options.pageNumKey] || this.multiSelect.config.currPage}" data-val="${seletVal}" class="dara-select-item" title="${titleText.replace(/["']/g, "")}">
-      ${this.targetOpt.enableRemoveBtn ? `<button type="button" class="dara-multiselect-btn" data-mode="item-remove">${Lanauage.getMessage("remove")}</button>` : ""}
+    <li data-new-item data-pageno="${tmpItem[this.multiSelect.options.pageNumKey] || this.multiSelect.config.currPage}" data-val="${seletVal}" class="daracl-select-item" title="${titleText.replace(/["']/g, "")}">
+      ${this.targetOpt.enableRemoveBtn ? `<button type="button" class="daracl-multiselect-btn" data-mode="item-remove">${Lanauage.getMessage("remove")}</button>` : ""}
       <span>${labelTemplate}</span>
     </li>`;
   }

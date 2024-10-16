@@ -1,8 +1,8 @@
 {
-  "name": "dara-multiselect",
-  "version": "0.0.5",
+  "name": "@daracl/multiselect",
+  "version": "0.0.1",
   "sideEffects": false,
-  "description": "Dara multiselect",
+  "description": "Daracl multiselect",
   "author": {
     "name": "darainfo",
     "email": "darainfosys@gmail.com",
@@ -11,28 +11,32 @@
   "license": "MIT",
   "keywords": [
     "multiselect",
-    "dara",
+    "@daracl/multiselect",
+    "daracl-multiselect",
+    "daracl",
     "multi-select",
     "darainfo",
     "javascript"
   ],
   "main": "src/index.ts",
   "types": "./dist/index.d.ts",
-  "exports": {
-    ".": "./dist/index.js",
-    "./dist/": "./dist/"
-  },
-  "homepage": "https://github.com/darainfo/dara-multiselect",
+  "homepage": "https://github.com/darainfo/daracl.multiselect",
   "bugs": {
-    "url": "https://github.com/darainfo/dara-multiselect/issues",
+    "url": "https://github.com/darainfo/daracl.multiselect/issues",
     "email": "darainfosys@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/darainfo/dara-multiselect.git"
+    "url": "https://github.com/darainfo/daracl.multiselect.git"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./dist/": "./dist/",
+    "./style/": "./style/"
   },
   "files": [
-    "dist"
+    "dist",
+    "style"
   ],
   "dependencies": {
     "init": "^0.1.2",
@@ -120,6 +124,6 @@
     "test": "jest",
     "start": "webpack-dev-server --open --config ./webpack.dev.server.js",
     "copy-dts": "copyfiles -u 1 \"src/**/*.d.ts\" dist",
-    "copy-app": "copyfiles -u 1 \"dist/dara.multiselect.*\" D:/03.opensources/vpi-console/vpi-console-web/src/main/webapp/webstatic/js/dara/multiselect"
+    "copy-app": "copyfiles -u 1 \"dist/daracl.multiselect.*\" D:/03.opensources/vpi-console/vpi-console-web/src/main/webapp/webstatic/js/daracl/multiselect"
   }
 }

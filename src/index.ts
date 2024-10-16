@@ -1,5 +1,5 @@
 import DaraMultiSelect from "./DaraMultiSelect";
 
-import "../style/dara.multiselect.scss";
+import "../style/daracl.multiselect.scss";
 
 export const MultiSelect = DaraMultiSelect;

@@ -8,7 +8,7 @@ module.exports = (env) => {
     mode: "development",
     devtool: "source-map",
     output: {
-      filename: "dara.multiselect.js",
+      filename: "daracl.multiselect.js",
     },
     plugins: [env.mode !== "deploy" ? new BundleAnalyzerPlugin() : ""],
     module: {

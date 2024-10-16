@@ -1,10 +1,10 @@
 # MultiSelect
 JavaScript multi select library
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/darainfo/dara-multiselect/blob/main/LICENSE)
-[![npm version](https://badge.fury.io/js/dara-multiselect.svg)](https://img.shields.io/npm/v/dara-multiselect)
-![npm](https://img.shields.io/npm/dt/dara-multiselect)
-[![minzipped size](https://img.shields.io/bundlephobia/minzip/dara-multiselect)](https://bundlephobia.com/package/dara-multiselect)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/darainfo/daracl.multiselect/blob/main/LICENSE)
+[![npm version](https://badge.fury.io/js/@daracl%2Fmultiselect.svg)](https://badge.fury.io/js/@daracl%2Fmultiselect)
+[![npm](https://img.shields.io/npm/d18m/%40daracl%2Fmultiselect)](https://github.com/darainfo/daracl.multiselect/releases)
+[![minzipped size](https://img.shields.io/bundlephobia/minzip/@daracl%2Fmultiselect)](https://bundlephobia.com/package/@daracl%2Fmultiselect)
 
 
 ## Browser Support
@@ -12,6 +12,11 @@ JavaScript multi select library
 ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png)  
 --- | --- | --- | --- | --- |  
 Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ |  
+
+
+<p>
+<img src="https://github.com/darainfo/daracl.multiselect/blob/main/demo.gif?raw=true"/>
+</p>
 
 
 1. Install
