@@ -37,7 +37,7 @@ npm start
 
 # 다국어 처리 
 ```
-  MultiSelect.setMessage({
+  Daracl.multiSelect.setMessage({
     up: '위',
     down: '아래',
     add: '추가',
@@ -53,7 +53,7 @@ npm start
 
 # 사용방법
 ```
-const example1 = new MultiSelect('#example1', {
+const example1 = Daracl.multiSelect.create('#example1', {
     mode: 'double'	// single, double
     , style: {
       height: 300

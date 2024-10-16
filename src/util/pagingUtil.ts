@@ -1,9 +1,9 @@
 import domUtils from "./domUtils";
-import DaraMultiSelect from "src/DaraMultiSelect";
+import MultiSelect from "src/MultiSelect";
 import { Paging } from "@t/Paging";
 
 export default {
-  setPaging(ctx: DaraMultiSelect, pageSelector: string, _paging: Paging) {
+  setPaging(ctx: MultiSelect, pageSelector: string, _paging: Paging) {
     _paging = _paging || {};
 
     const pagingInfo = this.getPagingInfo(_paging.totalCount || 0, _paging.currPage, _paging.countPerPage, _paging.unitPage);

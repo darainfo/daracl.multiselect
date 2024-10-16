@@ -1,4 +1,4 @@
-import DaraMultiSelect from "src/DaraMultiSelect";
+import MultiSelect from "src/MultiSelect";
 import { STYLE_CLASS } from "src/constants";
 import Lanauage from "src/util/Lanauage";
 import domUtils from "src/util/domUtils";
@@ -14,7 +14,7 @@ export class TargetItem {
   private targetElement;
 
   private targetOpt;
-  constructor(multiSelect: DaraMultiSelect) {
+  constructor(multiSelect: MultiSelect) {
     this.multiSelect = multiSelect;
     this.targetContainerElement = multiSelect.mainElement.querySelector('[data-item-type="target"]') as Element;
     this.targetElement = multiSelect.mainElement.querySelector('[data-type="target"]') as Element;

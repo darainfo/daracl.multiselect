@@ -23,6 +23,7 @@ module.exports = {
     path: path.join(__dirname, "dist"),
     filename: "daracl.multiselect.js",
     libraryTarget: "umd",
+    library: ["Daracl", "multiSelect"],
   },
 
   resolve: {

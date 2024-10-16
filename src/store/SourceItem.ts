@@ -1,4 +1,4 @@
-import DaraMultiSelect from "src/DaraMultiSelect";
+import MultiSelect from "src/MultiSelect";
 import Lanauage from "src/util/Lanauage";
 import domUtils from "src/util/domUtils";
 import itemUtils from "src/util/itemUtils";
@@ -14,7 +14,7 @@ export class SourceItem {
 
   private isSingleMode = false;
 
-  constructor(multiSelect: DaraMultiSelect) {
+  constructor(multiSelect: MultiSelect) {
     this.multiSelect = multiSelect;
     this.isSingleMode = multiSelect.options.mode == "single";
     this.sourceContainerElement = this.multiSelect.mainElement.querySelector('[data-item-type="source"]') as Element;

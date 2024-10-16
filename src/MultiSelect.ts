@@ -86,19 +86,19 @@ const defaultPaging = {
 };
 
 interface ComponentMap {
-  [key: string]: DaraMultiSelect;
+  [key: string]: MultiSelect;
 }
 
 // all instance
 const allInstance: ComponentMap = {};
 
 /**
- * DaraMultiSelect class
+ * MultiSelect class
  *
- * @class DaraMultiSelect
- * @typedef {DaraMultiSelect}
+ * @class MultiSelect
+ * @typedef {MultiSelect}
  */
-export default class DaraMultiSelect {
+export default class MultiSelect {
   public static VERSION = `${APP_VERSION}`;
   public options;
 
@@ -148,6 +148,10 @@ export default class DaraMultiSelect {
     } else {
       throw new Error(`${selector} form selector not found`);
     }
+  }
+
+  public static create(selector: string, options: Options, message: Message): MultiSelect {
+    return new MultiSelect(selector, options, message);
   }
 
   public init() {

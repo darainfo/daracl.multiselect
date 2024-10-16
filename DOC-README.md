@@ -1,4 +1,4 @@
-# DaraMultiSelect
+# MultiSelect
 
 
-DaraMultiSelect Api Guide
+MultiSelect Api Guide
