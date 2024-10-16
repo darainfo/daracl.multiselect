@@ -9,7 +9,7 @@ import domUtils from "./util/domUtils";
 
 declare const APP_VERSION: string;
 
-const defaultOptions = {
+let defaultOptions = {
   style: {
     width: "auto",
     height: 300,
@@ -154,6 +154,20 @@ export default class MultiSelect {
     return new MultiSelect(selector, options, message);
   }
 
+  /**
+   * default options 셋팅
+   *
+   * @static
+   * @typedef {Object} defaultOptions
+   */
+  public static setOptions(options: Options) {
+    defaultOptions = utils.objectMerge({}, defaultOptions, options);
+  }
+
+  public static setMessage(message: Message): void {
+    Lanauage.set(message);
+  }
+
   public init() {
     this._changePageInfo(1, true);
     this.render();
@@ -214,10 +228,6 @@ export default class MultiSelect {
     }
 
     this.config.currentPageItem = this.config.allPageItem[pageNo];
-  }
-
-  public static setMessage(message: Message): void {
-    Lanauage.set(message);
   }
 
   public setFocus(type: string) {
