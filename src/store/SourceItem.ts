@@ -175,6 +175,7 @@ export class SourceItem {
 
       domUtils.empty(this.sourceElement, strHtm.join(""));
 
+      this.emptyMessage(false);
       this.initRowItemEvent();
     } else {
       this.emptyMessage(true);

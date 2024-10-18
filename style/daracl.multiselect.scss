@@ -1,6 +1,6 @@
-@import "variable";
+@use "variable";
 
-@import "./theme/variable-dark";
+@use "theme/variable-dark";
 
 .daracl-multiselect {
   -moz-box-sizing: border-box;

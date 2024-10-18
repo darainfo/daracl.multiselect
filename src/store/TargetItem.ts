@@ -263,8 +263,10 @@ export class TargetItem {
           this.multiSelect.config.currentPageItem.remove(key);
         }
 
+        console.log("asdfawef ", this.multiSelect.config.currentPageItem.size());
+
         if (this.multiSelect.config.currentPageItem.size() < 1) {
-          this.emptyMessage(false);
+          this.emptyMessage(true);
         }
       }
     } else {
@@ -337,6 +339,7 @@ export class TargetItem {
       }
 
       if (strHtm.length > 0) {
+        this.emptyMessage(false);
         if (mode == "add") {
           if (this.multiSelect.options.addPosition == "top") {
             domUtils.prepend(this.targetElement, strHtm.join(""));
